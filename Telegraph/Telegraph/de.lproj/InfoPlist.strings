@@ -1,0 +1,6 @@
+/* Localized versions of Info.plist keys */
+
+"CFBundleDisplayName" = "WiseMonkeys";
+
+"NSContactsUsageDescription" = "WiseMonkeys speichert deine Kontakte verschlüsselt in der sicheren WiseMonkeys Cloud, damit du dich mit deinen Freunden auf all deinen Geräten verbinden kannst.";
+"NSLocationWhenInUseUsageDescription" = "Wenn du Freunden deinen Standort mitteilen willst, musst du WiseMonkeys den Zugriff darauf erlauben.";

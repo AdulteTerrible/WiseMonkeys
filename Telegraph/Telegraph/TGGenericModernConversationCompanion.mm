@@ -27,6 +27,7 @@
 #import "TGPreparedMessage.h"
 #import "TGPreparedTextMessage.h"
 #import "TGPreparedMapMessage.h"
+#import "WMPreparedMeetingMessage.h"
 #import "TGPreparedLocalImageMessage.h"
 #import "TGPreparedRemoteImageMessage.h"
 #import "TGPreparedLocalVideoMessage.h"
@@ -1148,6 +1149,16 @@ typedef enum {
     }];
 }
 
+- (void)controllerWantsToSendMeetingWithDescription:(NSString*)text date:(NSString*)d time:(NSString*)t location:(NSString*)l
+{
+    [TGModernConversationCompanion dispatchOnMessageQueue:^
+     {
+         WMPreparedMeetingMessage *preparedMessage = [[WMPreparedMeetingMessage alloc] initWithDescription:text date:d time:t location:l];
+         preparedMessage.messageLifetime = [self messageLifetime];
+         [self _sendPreparedMessages:@[preparedMessage] automaticallyAddToList:true withIntent:TGSendMessageIntentOther];
+     }];
+}
+
 - (NSURL *)fileUrlForDocumentMedia:(TGDocumentMediaAttachment *)documentMedia
 {
     if (documentMedia.localDocumentId != 0)
@@ -1644,6 +1655,19 @@ typedef enum {
         {
             switch (attachment.type)
             {
+                case TGMeetingMediaAttachmentType:
+                {
+                    WMMeetingMediaAttachment *meetingAttachment = (WMMeetingMediaAttachment *)attachment;
+                    WMPreparedMeetingMessage *meetingMessage = [[WMPreparedMeetingMessage alloc] initWithDescription:meetingAttachment.descriptionString
+                                                                                                                date:meetingAttachment.dateString
+                                                                                                                time:meetingAttachment.timeString
+                                                                                                            location:meetingAttachment.locationString];
+                    if (!copyAssetsData)
+                        meetingMessage.replacingMid = message.mid;
+                    [preparedMessages addObject:meetingMessage];
+                    messageAdded = true;
+                    break;
+                }
                 case TGLocationMediaAttachmentType:
                 {
                     TGLocationMediaAttachment *locationAttachment = (TGLocationMediaAttachment *)attachment;

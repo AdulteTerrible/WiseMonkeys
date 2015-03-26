@@ -10098,6 +10098,10 @@ typedef struct {
                         }
                     }
                 }
+                else if ([media isKindOfClass:[WMMeetingMediaAttachment class]])
+                {
+                    //TODO:
+                }
                 else if ([media isKindOfClass:[TGLocationMediaAttachment class]])
                 {
                     //TODO:

@@ -646,6 +646,13 @@
 		93F5D960162A36CC00E38E48 /* TGSendInvitesActor.m in Sources */ = {isa = PBXBuildFile; fileRef = 93F5D95F162A36CC00E38E48 /* TGSendInvitesActor.m */; };
 		93F6940616932F8700691086 /* TGBlockListRequestActor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93F6940516932F8700691086 /* TGBlockListRequestActor.mm */; };
 		93FF24E616FE2431008F6AA8 /* TGLoginWelcomeController.m in Sources */ = {isa = PBXBuildFile; fileRef = 93FF24E516FE2431008F6AA8 /* TGLoginWelcomeController.m */; };
+		BE5243ED1ABEDC9800D119FF /* WMMeetingCreationController.m in Sources */ = {isa = PBXBuildFile; fileRef = BE5243EC1ABEDC9800D119FF /* WMMeetingCreationController.m */; };
+		BE5243F01ABEE3B300D119FF /* WMMeeting.m in Sources */ = {isa = PBXBuildFile; fileRef = BE5243EF1ABEE3B300D119FF /* WMMeeting.m */; };
+		BE5243F51ABF8A9F00D119FF /* WMTextCollectionItem.m in Sources */ = {isa = PBXBuildFile; fileRef = BE5243F21ABF8A9F00D119FF /* WMTextCollectionItem.m */; };
+		BE5243F61ABF8A9F00D119FF /* WMTextCollectionItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = BE5243F41ABF8A9F00D119FF /* WMTextCollectionItemView.m */; };
+		BE5243F91AC203B800D119FF /* WMPreparedMeetingMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = BE5243F81AC203B800D119FF /* WMPreparedMeetingMessage.m */; };
+		BE5243FC1AC2061200D119FF /* WMMeetingMediaAttachment.m in Sources */ = {isa = PBXBuildFile; fileRef = BE5243FB1AC2061200D119FF /* WMMeetingMediaAttachment.m */; };
+		BE5243FF1AC2D65200D119FF /* WMMeetingMediaAttachment+Telegraph.m in Sources */ = {isa = PBXBuildFile; fileRef = BE5243FE1AC2D65200D119FF /* WMMeetingMediaAttachment+Telegraph.m */; };
 		BE6A13411ABCD9F000BEF0AD /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BE6A13401ABCD9F000BEF0AD /* Images.xcassets */; };
 		D00040A515BCD2EA00AF9EBF /* TGMessage+Telegraph.m in Sources */ = {isa = PBXBuildFile; fileRef = D00040A415BCD2EA00AF9EBF /* TGMessage+Telegraph.m */; };
 		D00040AC15BCD53900AF9EBF /* TGImageInfo+Telegraph.mm in Sources */ = {isa = PBXBuildFile; fileRef = D00040AB15BCD53900AF9EBF /* TGImageInfo+Telegraph.mm */; };
@@ -2721,6 +2728,20 @@
 		93F6940516932F8700691086 /* TGBlockListRequestActor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TGBlockListRequestActor.mm; sourceTree = "<group>"; };
 		93FF24E416FE2431008F6AA8 /* TGLoginWelcomeController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TGLoginWelcomeController.h; sourceTree = "<group>"; };
 		93FF24E516FE2431008F6AA8 /* TGLoginWelcomeController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TGLoginWelcomeController.m; sourceTree = "<group>"; };
+		BE5243E51ABEDA2F00D119FF /* WMMeetingCreationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMMeetingCreationController.h; sourceTree = "<group>"; };
+		BE5243EC1ABEDC9800D119FF /* WMMeetingCreationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WMMeetingCreationController.m; sourceTree = "<group>"; };
+		BE5243EE1ABEDFCC00D119FF /* WMMeeting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMMeeting.h; sourceTree = "<group>"; };
+		BE5243EF1ABEE3B300D119FF /* WMMeeting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WMMeeting.m; sourceTree = "<group>"; };
+		BE5243F11ABF8A9F00D119FF /* WMTextCollectionItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMTextCollectionItem.h; sourceTree = "<group>"; };
+		BE5243F21ABF8A9F00D119FF /* WMTextCollectionItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WMTextCollectionItem.m; sourceTree = "<group>"; };
+		BE5243F31ABF8A9F00D119FF /* WMTextCollectionItemView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMTextCollectionItemView.h; sourceTree = "<group>"; };
+		BE5243F41ABF8A9F00D119FF /* WMTextCollectionItemView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WMTextCollectionItemView.m; sourceTree = "<group>"; };
+		BE5243F71AC203B800D119FF /* WMPreparedMeetingMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMPreparedMeetingMessage.h; sourceTree = "<group>"; };
+		BE5243F81AC203B800D119FF /* WMPreparedMeetingMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WMPreparedMeetingMessage.m; sourceTree = "<group>"; };
+		BE5243FA1AC2061200D119FF /* WMMeetingMediaAttachment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMMeetingMediaAttachment.h; sourceTree = "<group>"; };
+		BE5243FB1AC2061200D119FF /* WMMeetingMediaAttachment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WMMeetingMediaAttachment.m; sourceTree = "<group>"; };
+		BE5243FD1AC2D65200D119FF /* WMMeetingMediaAttachment+Telegraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "WMMeetingMediaAttachment+Telegraph.h"; sourceTree = "<group>"; };
+		BE5243FE1AC2D65200D119FF /* WMMeetingMediaAttachment+Telegraph.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "WMMeetingMediaAttachment+Telegraph.m"; sourceTree = "<group>"; };
 		BE6A13401ABCD9F000BEF0AD /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		BE6A13431ABCE17B00BEF0AD /* TGAppConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TGAppConfiguration.h; sourceTree = "<group>"; };
 		D00040A315BCD2EA00AF9EBF /* TGMessage+Telegraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "TGMessage+Telegraph.h"; sourceTree = "<group>"; };
@@ -4804,36 +4825,38 @@
 		93064E0D1834F2F20024C05A /* Data */ = {
 			isa = PBXGroup;
 			children = (
-				93064E0A1834F2C20024C05A /* TGPreparedMessage.h */,
-				93064E0B1834F2C20024C05A /* TGPreparedMessage.m */,
-				93064E0E1834F3F90024C05A /* TGPreparedTextMessage.h */,
-				93064E0F1834F3F90024C05A /* TGPreparedTextMessage.m */,
-				93C23087183D03A70071CB58 /* TGPreparedMapMessage.h */,
-				93C23088183D03A70071CB58 /* TGPreparedMapMessage.m */,
-				93A2A90A1844AE8D0046FEBE /* TGPreparedLocalImageMessage.h */,
-				93A2A90B1844AE8D0046FEBE /* TGPreparedLocalImageMessage.m */,
-				9308D8211845382500FC395E /* TGPreparedRemoteImageMessage.h */,
-				9308D8221845382500FC395E /* TGPreparedRemoteImageMessage.m */,
-				D0EA68FE1A023A9200D1F747 /* TGPreparedDownloadImageMessage.h */,
-				D0EA68FF1A023A9200D1F747 /* TGPreparedDownloadImageMessage.m */,
-				9308D82A184541F400FC395E /* TGPreparedLocalVideoMessage.h */,
-				9308D82B184541F400FC395E /* TGPreparedLocalVideoMessage.m */,
-				93D1D7671846439B00947655 /* TGPreparedRemoteVideoMessage.h */,
-				93D1D7681846439B00947655 /* TGPreparedRemoteVideoMessage.m */,
-				93A60640185FC429007E3477 /* TGPreparedLocalDocumentMessage.h */,
-				93A60641185FC429007E3477 /* TGPreparedLocalDocumentMessage.m */,
-				933AA49118606AB1000AA848 /* TGPreparedRemoteDocumentMessage.h */,
-				933AA49218606AB1000AA848 /* TGPreparedRemoteDocumentMessage.m */,
-				D0EA69011A024F5700D1F747 /* TGPreparedDownloadDocumentMessage.h */,
-				D0EA69021A024F5700D1F747 /* TGPreparedDownloadDocumentMessage.m */,
-				932E00EC184B8CC40001D109 /* TGPreparedForwardedMessage.h */,
-				932E00ED184B8CC40001D109 /* TGPreparedForwardedMessage.m */,
 				932E00EF184BAAAD0001D109 /* TGPreparedContactMessage.h */,
 				932E00F0184BAAAD0001D109 /* TGPreparedContactMessage.m */,
+				D0EA69011A024F5700D1F747 /* TGPreparedDownloadDocumentMessage.h */,
+				D0EA69021A024F5700D1F747 /* TGPreparedDownloadDocumentMessage.m */,
+				D0EA68FE1A023A9200D1F747 /* TGPreparedDownloadImageMessage.h */,
+				D0EA68FF1A023A9200D1F747 /* TGPreparedDownloadImageMessage.m */,
+				932E00EC184B8CC40001D109 /* TGPreparedForwardedMessage.h */,
+				932E00ED184B8CC40001D109 /* TGPreparedForwardedMessage.m */,
 				93C43B2918A05B7300165AE1 /* TGPreparedLocalAudioMessage.h */,
 				93C43B2A18A05B7300165AE1 /* TGPreparedLocalAudioMessage.m */,
+				93A60640185FC429007E3477 /* TGPreparedLocalDocumentMessage.h */,
+				93A60641185FC429007E3477 /* TGPreparedLocalDocumentMessage.m */,
+				93A2A90A1844AE8D0046FEBE /* TGPreparedLocalImageMessage.h */,
+				93A2A90B1844AE8D0046FEBE /* TGPreparedLocalImageMessage.m */,
+				9308D82A184541F400FC395E /* TGPreparedLocalVideoMessage.h */,
+				9308D82B184541F400FC395E /* TGPreparedLocalVideoMessage.m */,
+				93C23087183D03A70071CB58 /* TGPreparedMapMessage.h */,
+				93C23088183D03A70071CB58 /* TGPreparedMapMessage.m */,
+				93064E0A1834F2C20024C05A /* TGPreparedMessage.h */,
+				93064E0B1834F2C20024C05A /* TGPreparedMessage.m */,
 				D046965618A2615C009764B2 /* TGPreparedRemoteAudioMessage.h */,
 				D046965718A2615C009764B2 /* TGPreparedRemoteAudioMessage.m */,
+				933AA49118606AB1000AA848 /* TGPreparedRemoteDocumentMessage.h */,
+				933AA49218606AB1000AA848 /* TGPreparedRemoteDocumentMessage.m */,
+				9308D8211845382500FC395E /* TGPreparedRemoteImageMessage.h */,
+				9308D8221845382500FC395E /* TGPreparedRemoteImageMessage.m */,
+				93D1D7671846439B00947655 /* TGPreparedRemoteVideoMessage.h */,
+				93D1D7681846439B00947655 /* TGPreparedRemoteVideoMessage.m */,
+				93064E0E1834F3F90024C05A /* TGPreparedTextMessage.h */,
+				93064E0F1834F3F90024C05A /* TGPreparedTextMessage.m */,
+				BE5243F71AC203B800D119FF /* WMPreparedMeetingMessage.h */,
+				BE5243F81AC203B800D119FF /* WMPreparedMeetingMessage.m */,
 			);
 			name = Data;
 			sourceTree = "<group>";
@@ -7729,6 +7752,12 @@
 		D08805D6156E8FB800311537 /* User Interface */ = {
 			isa = PBXGroup;
 			children = (
+				BE5243F11ABF8A9F00D119FF /* WMTextCollectionItem.h */,
+				BE5243F21ABF8A9F00D119FF /* WMTextCollectionItem.m */,
+				BE5243F31ABF8A9F00D119FF /* WMTextCollectionItemView.h */,
+				BE5243F41ABF8A9F00D119FF /* WMTextCollectionItemView.m */,
+				BE5243EC1ABEDC9800D119FF /* WMMeetingCreationController.m */,
+				BE5243E51ABEDA2F00D119FF /* WMMeetingCreationController.h */,
 				D073B9CA192AC67800BBD071 /* Legacy */,
 				D044CBBE192AA3320001C986 /* Controllers */,
 			);
@@ -7860,6 +7889,10 @@
 		D0880628156EAA5600311537 /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				BE5243FD1AC2D65200D119FF /* WMMeetingMediaAttachment+Telegraph.h */,
+				BE5243FE1AC2D65200D119FF /* WMMeetingMediaAttachment+Telegraph.m */,
+				BE5243FA1AC2061200D119FF /* WMMeetingMediaAttachment.h */,
+				BE5243FB1AC2061200D119FF /* WMMeetingMediaAttachment.m */,
 				D01E9E0015B8D94700C624F2 /* Media */,
 				D00040A315BCD2EA00AF9EBF /* TGMessage+Telegraph.h */,
 				D00040A415BCD2EA00AF9EBF /* TGMessage+Telegraph.m */,
@@ -8544,7 +8577,9 @@
 				D0983D0D19CB9A4300CE5BB0 /* TGUploadAvatarFutureAction.h */,
 				D0983D0E19CB9A4300CE5BB0 /* TGUploadAvatarFutureAction.m */,
 				D0983D0F19CB9A4300CE5BB0 /* TGUser.h */,
+				BE5243EE1ABEDFCC00D119FF /* WMMeeting.h */,
 				D0983D1019CB9A4300CE5BB0 /* TGUser.m */,
+				BE5243EF1ABEE3B300D119FF /* WMMeeting.m */,
 				D0983D1119CB9A4300CE5BB0 /* TGVideoInfo.h */,
 				D0983D1219CB9A4300CE5BB0 /* TGVideoInfo.mm */,
 				D0983D1319CB9A4300CE5BB0 /* TGVideoMediaAttachment.h */,
@@ -11091,6 +11126,7 @@
 				D098410919CB9BE200CE5BB0 /* TLRPCcontacts_acceptRequest.mm in Sources */,
 				D0B2C8D8195B14EA00CA9F1E /* MP4Atom.m in Sources */,
 				D0983D7819CB9A4300CE5BB0 /* TGImageUtils.mm in Sources */,
+				BE5243F61ABF8A9F00D119FF /* WMTextCollectionItemView.m in Sources */,
 				D098411619CB9BE200CE5BB0 /* TLRPCcontacts_getSuggested.mm in Sources */,
 				D0983D4C19CB9A4300CE5BB0 /* TGContactBinding.m in Sources */,
 				936DE19F1850D34800D90029 /* TGCommentCollectionItemView.m in Sources */,
@@ -11109,6 +11145,7 @@
 				D066E9B618C8D0DA00509410 /* TGSupportPeerActor.m in Sources */,
 				D0EA69961A0A18B900D1F747 /* TGNotificationPrivacyAccountSetting.m in Sources */,
 				D0EFBEE81A1ABACA00FF33C3 /* TGPhoneCodeCollectionItemView.m in Sources */,
+				BE5243FC1AC2061200D119FF /* WMMeetingMediaAttachment.m in Sources */,
 				D0549E161926269F002952ED /* ATActor.m in Sources */,
 				D08BC67B19AE385C007F126A /* TGUserAvatarGalleryItemView.m in Sources */,
 				D098408819CB9BE200CE5BB0 /* TLcontacts_Blocked.mm in Sources */,
@@ -11475,7 +11512,9 @@
 				D098418719CB9BE200CE5BB0 /* TLBool.m in Sources */,
 				93992D761829238200F29746 /* TGModernClockProgressView.m in Sources */,
 				93F5D960162A36CC00E38E48 /* TGSendInvitesActor.m in Sources */,
+				BE5243FF1AC2D65200D119FF /* WMMeetingMediaAttachment+Telegraph.m in Sources */,
 				D0EA68DD1A01549200D1F747 /* PSLMDBKeyValueCursor.m in Sources */,
+				BE5243ED1ABEDC9800D119FF /* WMMeetingCreationController.m in Sources */,
 				D0EA692D1A07B6C200D1F747 /* TGWebSearchResultsGalleryInternalGifItem.m in Sources */,
 				D098418F19CB9BE200CE5BB0 /* TLMetaRpc.mm in Sources */,
 				D0CB14A7199CEFAE00EBCEA7 /* TGGenericPeerMediaGalleryDeleteAccessoryView.m in Sources */,
@@ -11576,6 +11615,7 @@
 				D0EA68DF1A01549200D1F747 /* PSLMDBKeyValueStore.m in Sources */,
 				D066E9A018C6A88B00509410 /* stream.c in Sources */,
 				D0498FCF197857CD0080A679 /* TGModernGalleryRotationGestureRecognizer.m in Sources */,
+				BE5243F51ABF8A9F00D119FF /* WMTextCollectionItem.m in Sources */,
 				D098408119CB9BE200CE5BB0 /* TLClient_DH_Inner_Data.mm in Sources */,
 				930384301811A4EE00CAC996 /* TGCollectionMenuController.m in Sources */,
 				93877EC41659736D001FD42E /* TGActionMenuItemCell.m in Sources */,
@@ -12025,6 +12065,7 @@
 				D098408019CB9BE200CE5BB0 /* TLChatPhoto.mm in Sources */,
 				939ECA3B188EB4CB004ABAB7 /* TGOverlayControllerWindow.m in Sources */,
 				D03FECE419CC73FD004866D6 /* TGSecretPeerMediaGalleryImageItemView.m in Sources */,
+				BE5243F91AC203B800D119FF /* WMPreparedMeetingMessage.m in Sources */,
 				930A94E9189E4F0500A20BE0 /* TGForwardContactPickerController.m in Sources */,
 				D0983D7619CB9A4300CE5BB0 /* TGImageSearchQueryCell.m in Sources */,
 				D0BE9B721A38E4F60001972E /* TGAttachmentSheetRecentAssetCell.m in Sources */,
@@ -12157,6 +12198,7 @@
 				D09840BF19CB9BE200CE5BB0 /* TLInputPeer.mm in Sources */,
 				D098418E19CB9BE200CE5BB0 /* TLMetaObject.mm in Sources */,
 				D0983D7A19CB9A4300CE5BB0 /* TGImageViewControllerInterfaceView.m in Sources */,
+				BE5243F01ABEE3B300D119FF /* WMMeeting.m in Sources */,
 				D098410619CB9BE200CE5BB0 /* TLRPCauth_sendSms.mm in Sources */,
 				930384331811A93A00CAC996 /* TGButtonCollectionItem.m in Sources */,
 				D098415D19CB9BE200CE5BB0 /* TLRPCphotos_getPhotos.mm in Sources */,

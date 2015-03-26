@@ -15,6 +15,8 @@
 #import "TGAudioMediaAttachment+Telegraph.h"
 #import "TGImageInfo+Telegraph.h"
 
+#import "WMMeetingMediaAttachment+Telegraph.h"
+
 #import "TGRemoteImageView.h"
 
 @implementation TGMessage (Telegraph)
@@ -121,6 +123,22 @@
                         NSMutableArray *array = [[NSMutableArray alloc] init];
                         [array addObjectsFromArray:mediaAttachments];
                         [array addObject:contactAttachment];
+                        mediaAttachments = array;
+                    }
+                }
+                else if ([concreteMessage.media isKindOfClass:[TLMessageMedia$messageMediaMeeting class]])
+                {
+                    TLMessageMedia$messageMediaMeeting *mediaContact = (TLMessageMedia$messageMediaMeeting *)concreteMessage.media;
+                    
+                    WMMeetingMediaAttachment *meetingAttachment = [[WMMeetingMediaAttachment alloc] initWithTelegraphMeetingDesc:mediaContact];
+                    
+                    if (mediaAttachments == nil)
+                        mediaAttachments = [NSArray arrayWithObject:meetingAttachment];
+                    else
+                    {
+                        NSMutableArray *array = [[NSMutableArray alloc] init];
+                        [array addObjectsFromArray:mediaAttachments];
+                        [array addObject:meetingAttachment];
                         mediaAttachments = array;
                     }
                 }

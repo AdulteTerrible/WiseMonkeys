@@ -384,6 +384,19 @@ static UIColor *coloredNameForUid(int uid, __unused int currentUserId)
                     [model layoutForContainerSize:containerSize];
                     return model;
                 }
+                case TGMeetingMediaAttachmentType:
+                {
+                    TGLog(@"TGMeetingMediaAttachmentType case reached");
+                    break;
+//                    NSAssert(false, @"To be implemented");
+//                    TGMapMessageViewModel *model = [[TGMapMessageViewModel alloc] initWithLatitude:((TGLocationMediaAttachment *)attachment).latitude longitude:((TGLocationMediaAttachment *)attachment).longitude message:message author:useAuthor ? _author : nil context:_context];
+//                    if (useAuthor)
+//                        [model setAuthorAvatarUrl:_author.photoUrlSmall];
+//                    model.collapseFlags = _collapseFlags;
+//                    [model layoutForContainerSize:containerSize];
+//                    return model;
+                    
+                }
                 case TGLocationMediaAttachmentType:
                 {
                     TGMapMessageViewModel *model = [[TGMapMessageViewModel alloc] initWithLatitude:((TGLocationMediaAttachment *)attachment).latitude longitude:((TGLocationMediaAttachment *)attachment).longitude message:message author:useAuthor ? _author : nil context:_context];
@@ -395,8 +408,17 @@ static UIColor *coloredNameForUid(int uid, __unused int currentUserId)
                 }
                 case TGContactMediaAttachmentType:
                 {
-                    contactIndex = index;
-                    contactUid = ((TGContactMediaAttachment *)attachment).uid;
+                    //contactIndex = index;
+                    //contactUid = ((TGContactMediaAttachment *)attachment).uid;
+                    
+                    TGContactMediaAttachment *contact = (TGContactMediaAttachment *)attachment;
+                    if ([contact.phoneNumber isEqualToString:@"11111111"]) { // hack: it's a meeting
+                        // create viewModel for meeting
+                    }
+                    else {
+                        contactIndex = index;
+                        contactUid = ((TGContactMediaAttachment *)attachment).uid;
+                    }
                     break;
                 }
                 case TGActionMediaAttachmentType:

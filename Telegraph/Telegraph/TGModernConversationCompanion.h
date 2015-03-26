@@ -98,6 +98,7 @@ typedef enum {
 - (void)controllerDidChangeInputText:(NSString *)inputText;
 - (void)controllerWantsToSendTextMessage:(NSString *)text;
 - (void)controllerWantsToSendMapWithLatitude:(double)latitude longitude:(double)longitude;
+- (void)controllerWantsToSendMeetingWithDescription:(NSString*)text date:(NSString*)d time:(NSString*)t location:(NSString*)l;
 - (NSURL *)fileUrlForDocumentMedia:(TGDocumentMediaAttachment *)documentMedia;
 - (NSDictionary *)imageDescriptionFromImage:(UIImage *)image optionalAssetUrl:(NSString *)assetUrl;
 - (NSDictionary *)imageDescriptionFromBingSearchResult:(TGBingSearchResultItem *)item;

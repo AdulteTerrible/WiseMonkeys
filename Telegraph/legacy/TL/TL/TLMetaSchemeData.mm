@@ -8195,6 +8195,42 @@ TLScheme *TLgetMetaScheme()
         [TLmetaSchemeTypes addObject:constructor];
     }
     {
+        //TLMessageMedia$messageMediaMeeting
+        TLSchemeType$schemeType *constructor = [[TLSchemeType$schemeType alloc] init];
+        constructor.n_id = (int32_t)0x56e0d476;
+        constructor.predicate = @"messageMediaMeeting";
+        constructor.type = @"MessageMedia";
+        NSMutableArray *fields = [[NSMutableArray alloc] init];
+        {
+            {
+                TLSchemeParam$schemeParam *arg = [[TLSchemeParam$schemeParam alloc] init];
+                arg.name = @"meetingDescription";
+                arg.type = @"string";
+                [fields addObject:arg];
+            }
+            {
+                TLSchemeParam$schemeParam *arg = [[TLSchemeParam$schemeParam alloc] init];
+                arg.name = @"date";
+                arg.type = @"string";
+                [fields addObject:arg];
+            }
+            {
+                TLSchemeParam$schemeParam *arg = [[TLSchemeParam$schemeParam alloc] init];
+                arg.name = @"time";
+                arg.type = @"string";
+                [fields addObject:arg];
+            }
+            {
+                TLSchemeParam$schemeParam *arg = [[TLSchemeParam$schemeParam alloc] init];
+                arg.name = @"location";
+                arg.type = @"string";
+                [fields addObject:arg];
+            }
+        }
+        constructor.params = fields;
+        [TLmetaSchemeTypes addObject:constructor];
+    }
+    {
         //TLMessageMedia$messageMediaGeo
         TLSchemeType$schemeType *constructor = [[TLSchemeType$schemeType alloc] init];
         constructor.n_id = (int32_t)0x56e0d474;

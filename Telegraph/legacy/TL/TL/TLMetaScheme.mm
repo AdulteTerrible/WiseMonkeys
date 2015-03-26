@@ -386,6 +386,7 @@ void TLRegisterClasses()
     TLMetaClassStore::registerObjectClass([TLMessageMedia$messageMediaEmpty new]);
     TLMetaClassStore::registerObjectClass([TLMessageMedia$messageMediaPhoto new]);
     TLMetaClassStore::registerObjectClass([TLMessageMedia$messageMediaVideo new]);
+    TLMetaClassStore::registerObjectClass([TLMessageMedia$messageMediaMeeting new]);
     TLMetaClassStore::registerObjectClass([TLMessageMedia$messageMediaGeo new]);
     TLMetaClassStore::registerObjectClass([TLMessageMedia$messageMediaContact new]);
     TLMetaClassStore::registerObjectClass([TLMessageMedia$messageMediaUnsupported new]);

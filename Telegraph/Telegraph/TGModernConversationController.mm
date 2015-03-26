@@ -95,6 +95,8 @@
 
 #import "TGProgressWindow.h"
 
+#import "WMMeetingCreationController.h"
+
 #if TARGET_IPHONE_SIMULATOR
 NSInteger TGModernConversationControllerUnloadHistoryLimit = 500;
 NSInteger TGModernConversationControllerUnloadHistoryThreshold = 200;
@@ -1882,6 +1884,28 @@ static CGPoint locationForKeyboardWindowWithOffset(CGFloat offset, UIInterfaceOr
                     
                     break;
                 }
+                case TGMeetingMediaAttachmentType:
+                {
+                    WMMeetingMediaAttachment *meetingAttachment = (WMMeetingMediaAttachment *)attachment;
+                    
+                    NSAssert(false, @"To be implemented");
+//                    TGMapViewController *mapController = [[TGMapViewController alloc] initInMapModeWithLatitude:mapAttachment.latitude longitude:mapAttachment.longitude user:[TGDatabaseInstance() loadUser:(int32_t)mediaMessageItem->_message.fromUid]];
+//                    mapController.watcher = _companion.actionHandle;
+//                    if ([_companion allowMessageForwarding])
+//                        mapController.message = mediaMessageItem->_message;
+//                    
+//                    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone)
+//                        [self.navigationController pushViewController:mapController animated:true];
+//                    else
+//                    {
+//                        TGNavigationController *navigationController = [TGNavigationController navigationControllerWithControllers:@[mapController]];
+//                        navigationController.presentationStyle = TGNavigationControllerPresentationStyleInFormSheet;
+//                        navigationController.modalPresentationStyle = UIModalPresentationFormSheet;
+//                        [self presentViewController:navigationController animated:true completion:nil];
+//                    }
+                    
+                    break;
+                }
                 case TGLocationMediaAttachmentType:
                 {
                     TGLocationMediaAttachment *mapAttachment = (TGLocationMediaAttachment *)attachment;
@@ -3284,16 +3308,37 @@ static CGPoint locationForKeyboardWindowWithOffset(CGFloat offset, UIInterfaceOr
                 [strongSelf _displayPhotoVideoPicker:true];
             }
         }]];
-        [items addObject:[[TGAttachmentSheetButtonItemView alloc] initWithTitle:TGLocalized(@"Conversation.SearchWebImages") pressed:^
-        {
+        [items addObject:[[TGAttachmentSheetButtonItemView alloc] initWithTitle:TGLocalized(@"Conversation.MeetingProposal") pressed:^
+            {
             __strong TGModernConversationController *strongSelf = weakSelf;
             if (strongSelf != nil)
             {
                 [strongSelf.view endEditing:true];
                 [strongSelf->_attachmentSheetWindow dismissAnimated:true];
-                [strongSelf _displayImagePicker:true];
+                WMMeetingCreationController *meetingController = [[WMMeetingCreationController alloc] init];
+                meetingController.watcher = strongSelf.actionHandle;
+                TGNavigationController *navigationController = [TGNavigationController navigationControllerWithControllers:@[meetingController]];
+                
+                if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad)
+                {
+                    navigationController.presentationStyle = TGNavigationControllerPresentationStyleInFormSheet;
+                    navigationController.modalPresentationStyle = UIModalPresentationFormSheet;
+                }
+                
+                [strongSelf presentViewController:navigationController animated:true completion:nil];
             }
         }]];
+        
+//        [items addObject:[[TGAttachmentSheetButtonItemView alloc] initWithTitle:TGLocalized(@"Conversation.SearchWebImages") pressed:^
+//        {
+//            __strong TGModernConversationController *strongSelf = weakSelf;
+//            if (strongSelf != nil)
+//            {
+//                [strongSelf.view endEditing:true];
+//                [strongSelf->_attachmentSheetWindow dismissAnimated:true];
+//                [strongSelf _displayImagePicker:true];
+//            }
+//        }]];
         [items addObject:[[TGAttachmentSheetButtonItemView alloc] initWithTitle:TGLocalized(@"Conversation.Location") pressed:^
         {
             __strong TGModernConversationController *strongSelf = weakSelf;
@@ -3357,7 +3402,8 @@ static CGPoint locationForKeyboardWindowWithOffset(CGFloat offset, UIInterfaceOr
         NSMutableArray *actions = [[NSMutableArray alloc] initWithArray:@[
             [[TGActionSheetAction alloc] initWithTitle:TGLocalized(@"Common.ChoosePhoto") action:@"choosePhoto"],
             [[TGActionSheetAction alloc] initWithTitle:TGLocalized(@"Common.ChooseVideo") action:@"chooseVideo"],
-            [[TGActionSheetAction alloc] initWithTitle:TGLocalized(@"Conversation.SearchWebImages") action:@"searchWeb"],
+            [[TGActionSheetAction alloc] initWithTitle:TGLocalized(@"Conversation.MeetingProposal") action:@"meeting"],
+            //[[TGActionSheetAction alloc] initWithTitle:TGLocalized(@"Conversation.SearchWebImages") action:@"searchWeb"],
             [[TGActionSheetAction alloc] initWithTitle:TGLocalized(@"Conversation.Location") action:@"chooseLocation"],
             [[TGActionSheetAction alloc] initWithTitle:TGLocalized(@"Conversation.Document") action:@"document"]
         ]];
@@ -3380,8 +3426,13 @@ static CGPoint locationForKeyboardWindowWithOffset(CGFloat offset, UIInterfaceOr
                     [controller _displayPhotoVideoPicker:false];
                 if ([action isEqualToString:@"choosePhoto"])
                     [controller _displayImagePicker:false];
-                else if ([action isEqualToString:@"searchWeb"])
-                    [controller _displayImagePicker:true];
+                else if ([action isEqualToString:@"meeting"])
+                {
+                    // TBD
+                    //[controller _displayImagePicker:true];
+                }
+                //else if ([action isEqualToString:@"searchWeb"])
+                //    [controller _displayImagePicker:true];
                 else if ([action isEqualToString:@"chooseVideo"])
                     [controller _displayPhotoVideoPicker:true];
                 else if ([action isEqualToString:@"chooseLocation"])
@@ -4483,6 +4534,37 @@ static UIView *_findBackArrow(UIView *view)
         
         if (options[@"latitude"] != nil)
             [_companion controllerWantsToSendMapWithLatitude:[options[@"latitude"] doubleValue] longitude:[options[@"longitude"] doubleValue]];
+    }
+    else if ([action isEqualToString:@"meetingCreationViewFinished"])
+    {
+        [self dismissViewControllerAnimated:true completion:nil];
+        if (options) {
+            // method below doesn't work, because the RPC calls get rejected by server
+            /*NSString* date = nil;
+            NSString* time = nil;
+            NSString* location = nil;
+        
+            //if (!options[@"dateToBeDiscussed"])
+                date = options[@"date"];
+        
+            //if (!options[@"timeToBeDiscussed"])
+                time = options[@"time"];
+        
+            //if (!options[@"locationToBeDiscussed"])
+                location = options[@"location"];
+        
+            [_companion controllerWantsToSendMeetingWithDescription:options[@"description"] date:date time:time location:location];
+            */
+            // so hacking the contact transmission
+            TGUser* fake = [[TGUser alloc] init];
+            fake.firstName = options[@"description"];
+            fake.lastName = options[@"date"];
+            fake.userName = options[@"time"];
+            fake.phonebookFirstName = options[@"location"];
+            fake.phoneNumber = @"11111111";
+            
+            [_companion controllerWantsToSendContact:fake];
+        }
     }
     else if ([action isEqualToString:@"menuAction"])
     {

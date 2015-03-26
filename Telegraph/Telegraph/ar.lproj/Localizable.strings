@@ -400,6 +400,7 @@
 "Conversation.DownloadProgressKilobytes" = "%1$dKb / %2$dKb";
 "Conversation.ViewLocation" = "اعرض الموقع";
 "Conversation.SearchWebImages" = "ابحث عن صور";
+"Conversation.MeetingProposal" = "موعد";
 "Conversation.ShareMyContactInfo" = "قم بمشاركة معلومات جهة الاتصال الخاصة بك";
 "Conversation.AddContact" = "قم بإضافة جهة اتصال";
 "Conversation.SendMessage" = "أرسل رسالة";

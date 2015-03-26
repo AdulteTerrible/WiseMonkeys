@@ -427,6 +427,8 @@
             media = attachment;
         else if ([attachment isKindOfClass:[TGAudioMediaAttachment class]])
             media = attachment;
+        else if ([attachment isKindOfClass:[WMMeetingMediaAttachment class]])
+            media = attachment;
         else if ([attachment isKindOfClass:[TGLocationMediaAttachment class]])
             media = attachment;
     }
@@ -470,6 +472,8 @@
         if ([[NSFileManager defaultManager] fileExistsAtPath:audioPath])
             return true;
     }
+    else if ([attachment isKindOfClass:[WMMeetingMediaAttachment class]])
+        return true;
     else if ([attachment isKindOfClass:[TGLocationMediaAttachment class]])
         return true;
     
@@ -486,6 +490,8 @@
         return true;
     else if ([attachment isKindOfClass:[TGAudioMediaAttachment class]])
         return true;
+    else if ([attachment isKindOfClass:[WMMeetingMediaAttachment class]])
+        return false;
     else if ([attachment isKindOfClass:[TGLocationMediaAttachment class]])
         return false;
     
@@ -797,6 +803,24 @@
         }
         else
             return false;
+    }
+    else if ([attachment isKindOfClass:[WMMeetingMediaAttachment class]])
+    {
+        /*
+        [self setupFailTimeout:[TGModernSendMessageActor defaultTimeoutInterval]];
+        
+        TGLocationMediaAttachment *locationAttachment = attachment;
+        
+        id media = [self decryptedGeoPointWithLayer:[self currentPeerLayer] latitude:locationAttachment.latitude longitude:locationAttachment.longitude];
+        
+        int64_t randomId = self.preparedMessage.randomId;
+        if (randomId == 0)
+            arc4random_buf(&randomId, 8);
+        
+        _actionId = [TGModernSendSecretMessageActor enqueueOutgoingMessageForPeerId:[self peerId] layer:[self currentPeerLayer] keyId:0 randomId:randomId messageData:[TGModernSendSecretMessageActor prepareDecryptedMessageWithLayer:[self currentPeerLayer] text:nil media:media lifetime:self.preparedMessage.messageLifetime randomId:randomId] storedFileInfo:nil watcher:self];
+         */
+        NSAssert(false, @"To be implemented!");
+        return true;
     }
     else if ([attachment isKindOfClass:[TGLocationMediaAttachment class]])
     {

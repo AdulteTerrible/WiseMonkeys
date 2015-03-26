@@ -400,6 +400,7 @@
 "Conversation.DownloadProgressKilobytes" = "%1$dKb / %2$dKb";
 "Conversation.ViewLocation" = "위치 보기";
 "Conversation.SearchWebImages" = "이미지 찾기 ";
+"Conversation.MeetingProposal" = "会议";
 "Conversation.ShareMyContactInfo" = "내 연락처 정보 공유";
 "Conversation.AddContact" = "대화상대 추가";
 "Conversation.SendMessage" = "메시지 전송";

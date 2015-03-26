@@ -31,6 +31,15 @@
 
 @end
 
+@interface TLMessageMedia$messageMediaMeeting : TLMessageMedia
+
+@property (nonatomic, retain) NSString *meetingDescription;
+@property (nonatomic, retain) NSString *date;
+@property (nonatomic, retain) NSString *time;
+@property (nonatomic, retain) NSString *location;
+
+@end
+
 @interface TLMessageMedia$messageMediaGeo : TLMessageMedia
 
 @property (nonatomic, retain) TLGeoPoint *geo;

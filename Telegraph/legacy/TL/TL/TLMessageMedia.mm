@@ -130,6 +130,65 @@
 
 @end
 
+// TBD: implementing TLMessageMedia$messageMediaMeeting
+
+
+ @implementation TLMessageMedia$messageMediaMeeting : TLMessageMedia
+ 
+ 
+ - (int32_t)TLconstructorSignature
+ {
+ return (int32_t)0x5e7d2f40;
+ }
+ 
+ - (int32_t)TLconstructorName
+ {
+ return (int32_t)0xbe4c9bef;
+ }
+ 
+ - (id<TLObject>)TLbuildFromMetaObject:(std::tr1::shared_ptr<TLMetaObject>)metaObject
+ {
+ TLMessageMedia$messageMediaMeeting *object = [[TLMessageMedia$messageMediaMeeting alloc] init];
+ object.meetingDescription = metaObject->getString((int32_t)0xaecb6c80);
+ object.date = metaObject->getString((int32_t)0xa604f05e);
+ object.time = metaObject->getString((int32_t)0x10662e0f);
+ object.location = metaObject->getString((int32_t)0xafdf4074);
+     
+ return object;
+ }
+ 
+ - (void)TLfillFieldsWithValues:(std::map<int32_t, TLConstructedValue> *)values
+ {
+ {
+ TLConstructedValue value;
+ value.type = TLConstructedValueTypeString;
+ value.nativeObject = self.meetingDescription;
+ values->insert(std::pair<int32_t, TLConstructedValue>((int32_t)0xaecb6c80, value));
+ }
+ {
+ TLConstructedValue value;
+ value.type = TLConstructedValueTypeString;
+ value.nativeObject = self.date;
+ values->insert(std::pair<int32_t, TLConstructedValue>((int32_t)0xa604f05e, value));
+ }
+ {
+ TLConstructedValue value;
+ value.type = TLConstructedValueTypeString;
+ value.nativeObject = self.time;
+ values->insert(std::pair<int32_t, TLConstructedValue>((int32_t)0x10662e0e, value));
+ }
+ {
+ TLConstructedValue value;
+ value.type = TLConstructedValueTypeString;
+ value.nativeObject = self.location;
+ values->insert(std::pair<int32_t, TLConstructedValue>((int32_t)0xafdf4074, value));
+ }
+ }
+ 
+ 
+ @end
+
+
 @implementation TLMessageMedia$messageMediaGeo : TLMessageMedia
 
 

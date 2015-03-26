@@ -269,6 +269,8 @@
 
 - (void)navigateToProfileOfUser:(int)uid preferNativeContactId:(int)__unused preferNativeContactId encryptedConversationId:(int64_t)encryptedConversationId
 {
+    TGLog(@"navigateToProfileOfUser:");
+    
     UINavigationController *containingNavigationController = nil;
     if (TGAppDelegateInstance.phoneMainViewController != nil)
         containingNavigationController = TGAppDelegateInstance.mainNavigationController;

@@ -50,9 +50,6 @@
     TGSwitchCollectionItem *_locationIsToBeDiscussed;
     WMTextCollectionItem   *_locationItem;
     NSString               *_locationString;
-    
-    //NSMutableDictionary *_privateNotificationSettings;
-    //NSMutableDictionary *_groupNotificationSettings;
 }
 
 //@property (nonatomic, strong) TGUser *user;
@@ -71,9 +68,6 @@
     self = [super init];
     if (self)
     {
-        //_privateNotificationSettings = [[NSMutableDictionary alloc] initWithDictionary:@{@"muteUntil": @(0), @"soundId": @(1), @"previewText": @(true)}];
-        //_groupNotificationSettings = [[NSMutableDictionary alloc] initWithDictionary:@{@"muteUntil": @(0), @"soundId": @(1), @"previewText": @(true)}];
-        
         _actionHandle = [[ASHandle alloc] initWithDelegate:self releaseOnMainThread:true];
         
         [self setTitleText:TGLocalized(@"Meeting.Title")];
@@ -157,15 +151,7 @@
 {
     [_actionHandle reset];
     [ActionStageInstance() removeWatcher:self];
-    
-    //[self doUnloadView];
 }
-
-//- (void)doUnloadView
-//{
-//    //_mapView.delegate = nil;
-//    //_mapView = nil;
-//}
 
 - (void)viewWillAppear:(BOOL)animated
 {
@@ -221,8 +207,6 @@
 
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
-    //[_mapView setCenterCoordinate:_mapView.region.center animated:NO];
-    
     [super willAnimateRotationToInterfaceOrientation:toInterfaceOrientation duration:duration];
 }
 
@@ -270,32 +254,7 @@
         else
             [options setObject:[_locationItem text] forKey:@"location"];
         
-        /*// date
-        if ([_dateIsToBeDiscussed isOn]) {
-            [options setObject:[NSNumber numberWithBool:true] forKey:@"dateToBeDiscussed"];
-        }
-        else {
-            [options setObject:[NSNumber numberWithBool:false] forKey:@"dateToBeDiscussed"];
-            [options setObject:[_dateItem text] forKey:@"date"];
-        }
-        // time
-        if ([_timeIsToBeDiscussed isOn]) {
-            [options setObject:[NSNumber numberWithBool:true] forKey:@"timeToBeDiscussed"];
-        }
-        else {
-            [options setObject:[NSNumber numberWithBool:false] forKey:@"timeToBeDiscussed"];
-            [options setObject:[_timeItem text] forKey:@"time"];
-        }
-        // location
-        if ([_locationIsToBeDiscussed isOn]) {
-            [options setObject:[NSNumber numberWithBool:true] forKey:@"locationToBeDiscussed"];
-        }
-        else {
-            [options setObject:[NSNumber numberWithBool:false] forKey:@"locationToBeDiscussed"];
-            [options setObject:[_locationItem text] forKey:@"location"];
-        }
-        */
-        TGLog(@"Meeting creation: sendButtonPressed with: %@", options);
+         //TGLog(@"Meeting creation: sendButtonPressed with: %@", options);
         
         [watcherDelegate actionStageActionRequested:@"meetingCreationViewFinished" options:options];
     }

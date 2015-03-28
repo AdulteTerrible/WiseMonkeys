@@ -69,6 +69,8 @@
 #import "TGWebSearchController.h"
 #import "TGWebSearchInternalImageResult.h"
 
+//#import "WMModernConversationGenericMeetingPanel.h"
+
 #import <map>
 #import <vector>
 
@@ -113,6 +115,8 @@ typedef enum {
     NSUInteger _layer;
     
     NSString *_currentStickerSearchPath;
+    
+    //WMModernConversationGenericMeetingPanel *_meetingPanel;
 }
 
 @end
@@ -1151,12 +1155,28 @@ typedef enum {
 
 - (void)controllerWantsToSendMeetingWithDescription:(NSString*)text date:(NSString*)d time:(NSString*)t location:(NSString*)l
 {
-    [TGModernConversationCompanion dispatchOnMessageQueue:^
-     {
-         WMPreparedMeetingMessage *preparedMessage = [[WMPreparedMeetingMessage alloc] initWithDescription:text date:d time:t location:l];
-         preparedMessage.messageLifetime = [self messageLifetime];
-         [self _sendPreparedMessages:@[preparedMessage] automaticallyAddToList:true withIntent:TGSendMessageIntentOther];
-     }];
+    _meeting.meetingDescription = text;
+    
+    _meeting.dateIsToBeDiscussed = ([d isEqual:[NSNull null]]);
+    if (!_meeting.dateIsToBeDiscussed)
+        _meeting.date = d;
+    
+    _meeting.timeIsToBeDiscussed = ([t isEqual:[NSNull null]]);
+    if (!_meeting.timeIsToBeDiscussed)
+        _meeting.time = t;
+    
+    _meeting.locationIsToBeDiscussed = ([l isEqual:[NSNull null]]);
+    if (!_meeting.locationIsToBeDiscussed)
+        _meeting.location = l;
+
+
+    // the RPCs for my own "meeting type" get rejected by server
+    // so haacking the contact transmission
+    TGUser* fake = [[TGUser alloc] init];
+    fake.firstName = [[NSString alloc] initWithFormat:@"%@;%@", text,d];
+    fake.lastName = [[NSString alloc] initWithFormat:@"%@;%@", t,l];
+    fake.phoneNumber = @"11111111";
+    [self controllerWantsToSendContact:fake];
 }
 
 - (NSURL *)fileUrlForDocumentMedia:(TGDocumentMediaAttachment *)documentMedia
@@ -2520,7 +2540,12 @@ typedef enum {
 
 - (void)actionStageActionRequested:(NSString *)action options:(id)options
 {
-    if ([action isEqualToString:@"userAvatarTapped"])
+    if ([action isEqualToString:@"insertTextInInputPanel"])
+    {
+        TGModernConversationController *controller = self.controller;
+        [controller setInputText:options[@"text"] replace:true];
+    }
+    else if ([action isEqualToString:@"userAvatarTapped"])
     {
         if ([options[@"uid"] intValue] > 0)
             [[TGInterfaceManager instance] navigateToProfileOfUser:[options[@"uid"] intValue]];

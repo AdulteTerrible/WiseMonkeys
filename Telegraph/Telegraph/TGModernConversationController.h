@@ -84,6 +84,7 @@ typedef enum {
 - (void)setGlobalUnreadCount:(int)unreadCount;
 - (void)setCustomInputPanel:(TGModernConversationInputPanel *)customInputPanel;
 - (void)setPrimaryTitlePanel:(TGModernConversationTitlePanel *)titlePanel;
+- (void)setMeetingTitlePanel:(TGModernConversationTitlePanel *)meetingPanel;
 - (TGModernConversationTitlePanel *)primaryTitlePanel;
 - (void)setSecondaryTitlePanel:(TGModernConversationTitlePanel *)secondaryTitlePanel;
 - (void)setSecondaryTitlePanel:(TGModernConversationTitlePanel *)secondaryTitlePanel animated:(bool)animated;

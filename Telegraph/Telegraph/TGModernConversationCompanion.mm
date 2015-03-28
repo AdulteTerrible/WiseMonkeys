@@ -42,6 +42,8 @@
 
 #import "TGTelegraph.h"
 
+#import "WMModernConversationGenericMeetingPanel.h"
+
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 60000 // iOS 6.0 or later
 #define NEEDS_DISPATCH_RETAIN_RELEASE 0
 #else                                         // iOS 5.X or earlier
@@ -110,6 +112,7 @@ static void dispatchOnMessageQueue(dispatch_block_t block, bool synchronous)
     TGMessageModernConversationItem * (*_updateMediaStatusDataImpl)(id, SEL, TGMessageModernConversationItem *);
     
     bool _controllerShowingEmptyState; // Main Thread
+    
 }
 
 @end
@@ -130,6 +133,9 @@ static void dispatchOnMessageQueue(dispatch_block_t block, bool synchronous)
         viewContext.companion = self;
         viewContext.companionHandle = _actionHandle;
         _viewContext = viewContext;
+        
+        _meeting = [[WMMeeting alloc] init];
+        _meeting.isActive = false;
     }
     return self;
 }
@@ -174,6 +180,77 @@ static void dispatchOnMessageQueue(dispatch_block_t block, bool synchronous)
 {
     dispatchOnMessageQueue(block, false);
 }
+
+//////////// Dealing with Meetings
+
+-(bool) isMeetingIncludedIn:(TGMessage *)message
+{
+    // scan for a meeting hidden as a contact in attachment
+    // if found, extract it
+    if (message.mediaAttachments.count != 0) {
+        for (TGMediaAttachment *attachment in message.mediaAttachments) {
+            if (attachment.type == TGContactMediaAttachmentType) {
+                TGContactMediaAttachment *contact = (TGContactMediaAttachment *)attachment;
+                if ([contact.phoneNumber isEqualToString:@"11111111"]) { // haack: it's a meeting
+                    if (!_meeting.isActive) {
+                        NSArray *list1 = [contact.firstName componentsSeparatedByString:@";"];
+                        if (list1.count >0){
+                            _meeting.meetingDescription = [list1 objectAtIndex:0];
+                            if (list1.count >1) {
+                                _meeting.date = [list1 objectAtIndex:1];
+                                _meeting.dateIsToBeDiscussed = ([_meeting.date isEqualToString:@""]);
+                            }
+                        }
+                        
+                        NSArray *list2 = [contact.lastName componentsSeparatedByString:@";"];
+                        if (list2.count >0){
+                            _meeting.time = [list2 objectAtIndex:0];
+                            _meeting.timeIsToBeDiscussed = ([_meeting.time isEqualToString:@""]);
+                            if (list2.count >1) {
+                                _meeting.location = [list2 objectAtIndex:1];
+                                _meeting.locationIsToBeDiscussed = ([_meeting.location isEqualToString:@""]);
+                            }
+                        }
+                        
+                        _meeting.isActive = true;
+                        
+                        TGDispatchOnMainThread(^
+                        {
+                             [self loadControllerMeetingTitlePanel];
+                         });
+                    }
+                    return true;
+                }
+            }
+        }
+    }
+    
+    return false;
+}
+
+- (void)loadControllerMeetingTitlePanel
+{
+    [self _createOrUpdateMeetingTitlePanel:true];
+}
+
+- (void)_createOrUpdateMeetingTitlePanel:(bool)createIfNeeded
+{
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone)
+    {
+        WMModernConversationGenericMeetingPanel* panel = [[WMModernConversationGenericMeetingPanel alloc] init];
+        panel.companionHandle = self.actionHandle;
+        panel.meeting = self->_meeting;
+        
+        //NSMutableArray *actions = [[NSMutableArray alloc] init];
+        //[actions addObject:@{@"title": _meeting.meetingDescription, @"action": @"edit"}];
+        //[actions addObject:@{@"title": _meeting.date, @"action": @"info"}];
+        //[panel setButtonsWithTitlesAndActions:actions];
+        
+        [_controller setMeetingTitlePanel:panel];
+    }
+}
+
+//////////////////
 
 - (void)lockSendMessageSemaphore
 {
@@ -1269,8 +1346,10 @@ static void dispatchOnMessageQueue(dispatch_block_t block, bool synchronous)
     
     for (TGMessage *message in newMessages)
     {
-        TGMessageModernConversationItem *messageItem = [[TGMessageModernConversationItem alloc] initWithMessage:message context:_viewContext];
-        [_items addObject:messageItem];
+        if (![self isMeetingIncludedIn:message]) {
+            TGMessageModernConversationItem *messageItem = [[TGMessageModernConversationItem alloc] initWithMessage:message context:_viewContext];
+            [_items addObject:messageItem];
+        }
     }
     
     [self _updateMessageItemsWithData:_items];
@@ -1294,8 +1373,10 @@ static void dispatchOnMessageQueue(dispatch_block_t block, bool synchronous)
         
         for (TGMessage *message in newMessages)
         {
-            TGMessageModernConversationItem *messageItem = [[TGMessageModernConversationItem alloc] initWithMessage:message context:_viewContext];
-            [_items addObject:messageItem];
+            if (![self isMeetingIncludedIn:message]) {
+                TGMessageModernConversationItem *messageItem = [[TGMessageModernConversationItem alloc] initWithMessage:message context:_viewContext];
+                [_items addObject:messageItem];
+            }
         }
         
         [self _updateMessageItemsWithData:_items];
@@ -1361,13 +1442,18 @@ static void dispatchOnMessageQueue(dispatch_block_t block, bool synchronous)
                 int itemDate = (int)messageItem->_message.date;
                 if (itemDate < date || (itemDate == date && messageItem->_message.mid < mid))
                 {
-                    [insertArray insertObject:[[TGMessageModernConversationItem alloc] initWithMessage:message context:_viewContext] atIndex:index];
-                    inserted = true;
+                    if (![self isMeetingIncludedIn:message]) {
+                        [insertArray insertObject:[[TGMessageModernConversationItem alloc] initWithMessage:message context:_viewContext] atIndex:index];
+                        inserted = true;
+                    }
                     break;
                 }
             }
-            if (!inserted)
-                [insertArray insertObject:[[TGMessageModernConversationItem alloc] initWithMessage:message context:_viewContext] atIndex:_items.count];
+            if (!inserted) {
+                if (![self isMeetingIncludedIn:message]) {
+                    [insertArray insertObject:[[TGMessageModernConversationItem alloc] initWithMessage:message context:_viewContext] atIndex:_items.count];
+                }
+            }
         }
         
         NSIndexSet *insertAtIndices = nil;
@@ -1690,10 +1776,12 @@ static void dispatchOnMessageQueue(dispatch_block_t block, bool synchronous)
                         auto it = updatedMessagesWithMids.find(messageItem->_message.mid);
                         if (it != updatedMessagesWithMids.end())
                         {
-                            TGMessageModernConversationItem *updatedItem = [[TGMessageModernConversationItem alloc] initWithMessage:it->second context:_viewContext];
+                            if (![self isMeetingIncludedIn:it->second]) {
+                                TGMessageModernConversationItem *updatedItem = [[TGMessageModernConversationItem alloc] initWithMessage:it->second context:_viewContext];
                             
-                            [indexSet addIndex:index];
-                            [replacedItems addObject:updatedItem];
+                                [indexSet addIndex:index];
+                                [replacedItems addObject:updatedItem];
+                            }
                         }
                     }
                 }];

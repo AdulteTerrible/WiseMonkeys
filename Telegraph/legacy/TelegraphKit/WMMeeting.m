@@ -14,16 +14,27 @@
 
 @interface WMMeeting ()
 {
-//    bool _contactIdInitialized;
-//    bool _formattedPhoneInitialized;
-//    
-//    TG_SYNCHRONIZED_DEFINE(_cachedValues);
 }
 
 @end
 
 @implementation WMMeeting
 
+- (id) init
+{
+    if (self = [super init]) {
+        self.meetingDescription = @"";
+        self.date = @"";
+        self.dateIsToBeDiscussed = true;
+        self.time = @"";
+        self.timeIsToBeDiscussed = true;
+        self.location = @"";
+        self.locationIsToBeDiscussed = true;
+    }
+    return self;
+}
+
+/*
 - (id)copyWithZone:(NSZone *)__unused zone
 {
     WMMeeting *meeting = [[WMMeeting alloc] init];
@@ -32,16 +43,11 @@
     meeting.isActive = _isActive;
     meeting.meetingDescription = _meetingDescription;
     meeting.dateIsToBeDiscussed = _dateIsToBeDiscussed;
-    meeting.startDate = _startDate;
+    meeting.date = _date;
     meeting.timeIsToBeDiscussed = _timeIsToBeDiscussed;
-    meeting.startTime = _startTime;
+    meeting.time = _time;
     meeting.locationIsToBeDiscussed = _locationIsToBeDiscussed;
     meeting.location = _location;
-    //meeting.photoUrlSmall = _photoUrlSmall;
-    //meeting.photoUrlMedium = _photoUrlMedium;
-    //meeting.photoUrlBig = _photoUrlBig;
-    
-    meeting.customProperties = _customProperties;
     
     return meeting;
 }
@@ -57,20 +63,15 @@
         anotherMeeting.isActive == _isActive &&
         ((anotherMeeting.meetingDescription == nil && _meetingDescription == nil) || [anotherMeeting.meetingDescription isEqualToString:_meetingDescription]) &&
         anotherMeeting.dateIsToBeDiscussed == _dateIsToBeDiscussed &&
-        ((anotherMeeting.startDate == nil && _startDate == nil) || [anotherMeeting.startDate isEqualToDate:_startDate]) &&
+        ((anotherMeeting.date == nil && _date == nil) || [anotherMeeting.date isEqualToString:_date]) &&
         anotherMeeting.timeIsToBeDiscussed == _timeIsToBeDiscussed &&
-        ((anotherMeeting.startTime == nil && _startTime == nil) || [anotherMeeting.startTime isEqualToDate:_startTime]) &&
+        ((anotherMeeting.time == nil && _time == nil) || [anotherMeeting.time isEqualToString:_time]) &&
         anotherMeeting.locationIsToBeDiscussed == _locationIsToBeDiscussed &&
-        ((anotherMeeting.location == nil && _location == nil) || [anotherMeeting.location isEqualToString:_location])
-//        &&
-//        ((anotherMeeting.photoUrlSmall == nil && _photoUrlSmall == nil) || [anotherMeeting.photoUrlSmall isEqualToString:_photoUrlSmall]) &&
-//        ((anotherMeeting.photoUrlMedium == nil && _photoUrlMedium == nil) || [anotherMeeting.photoUrlMedium isEqualToString:_photoUrlMedium]) &&
-//        ((anotherMeeting.photoUrlBig == nil && _photoUrlBig == nil) || [anotherMeeting.photoUrlBig isEqualToString:_photoUrlBig])
-        )
+        ((anotherMeeting.location == nil && _location == nil) || [anotherMeeting.location isEqualToString:_location]))
     {
         return true;
     }
     return false;
 }
-
+*/
 @end

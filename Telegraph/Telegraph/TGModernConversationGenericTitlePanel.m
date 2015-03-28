@@ -26,7 +26,7 @@
 
 - (id)initWithFrame:(CGRect)frame
 {
-    self = [super initWithFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, MAX(36.0f, frame.size.height))];
+    self = [super initWithFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, MAX(100.0f, frame.size.height))];
     if (self)
     {
         if (!TGBackdropEnabled())

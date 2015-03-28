@@ -1,5 +1,6 @@
 # Xcode
 #
+Telegraph/thirdparty/pop/
 build/
 *.pbxuser
 !default.pbxuser

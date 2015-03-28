@@ -12,6 +12,8 @@
 
 #import "TGMessageRange.h"
 
+#import "WMMeeting.h"
+
 @class TGModernConversationController;
 @class TGModernViewContext;
 @class TGMessage;
@@ -46,6 +48,8 @@ typedef enum {
 @interface TGModernConversationCompanion : NSObject <ASWatcher>
 {
     NSMutableArray *_items;
+    
+    WMMeeting *_meeting;
 }
 
 @property (nonatomic, strong) ASHandle *actionHandle;
@@ -180,5 +184,7 @@ typedef enum {
 
 - (void)serviceNotificationsForMessageIds:(NSArray *)messageIds;
 - (void)markMessagesAsViewed:(NSArray *)messageIds;
+
+- (void)loadControllerMeetingTitlePanel;
 
 @end

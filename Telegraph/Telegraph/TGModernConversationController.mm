@@ -2586,6 +2586,24 @@ static CGPoint locationForKeyboardWindowWithOffset(CGFloat offset, UIInterfaceOr
     }
 }
 
+- (void)switchLikeToggleForMessage:(int32_t)messageId
+{
+    TGMessageModernConversationItem *highlightedItem = nil;
+    
+    for (TGModernCollectionCell *cell in _collectionView.visibleCells)
+    {
+        TGMessageModernConversationItem *messageItem = cell.boundItem;
+        if (messageItem != nil && messageItem->_message.mid == messageId)
+        {
+            highlightedItem = messageItem;
+            [highlightedItem switchLikeToggleWithViewStorage:_viewStorage];
+            
+            break;
+        }
+    }
+}
+
+
 - (void)showActionsMenuForLink:(NSString *)url
 {
     if ([url hasPrefix:@"tel:"])

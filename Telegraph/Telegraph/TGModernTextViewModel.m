@@ -4,10 +4,20 @@
 
 #import "TGReusableLabel.h"
 
+typedef enum {
+    WMTextTypePlain =0,
+    WMTextTypeDate =1,
+    WMTextTypeTime =2,
+    WMTextTypeLocation =4
+} WMTextType;
+
 @interface TGModernTextViewModel ()
 {
     TGReusableLabelLayoutData *_layoutData;
     CGFloat _cachedLayoutContainerWidth;
+    
+    WMTextType  _textType;
+    bool        _isLiked;
 }
 
 @end
@@ -19,8 +29,15 @@
     self = [super init];
     if (self != nil)
     {
-        if (text.length != 0)
+        _textType = WMTextTypePlain;
+        
+        if (text.length != 0) {
             _text = text;
+            [self updateTextType];
+
+            _isLikeable = ((_textType == WMTextTypeDate)||(_textType == WMTextTypeTime)||(_textType == WMTextTypeLocation));
+            _isLiked = false;
+        }
         else
             _text = @" ";
         
@@ -61,8 +78,9 @@
 
 - (bool)layoutNeedsUpdatingForContainerSize:(CGSize)containerSize
 {
-    if (_layoutData == nil || ABS(containerSize.width - _cachedLayoutContainerWidth) > FLT_EPSILON)
+    if (_layoutData == nil || ABS(containerSize.width - _cachedLayoutContainerWidth) > FLT_EPSILON ) {
         return true;
+    }
     return false;
 }
 
@@ -72,10 +90,17 @@
     {
         _cachedLayoutContainerWidth = 0.0f;
         
-        if (text.length != 0)
+        if (text.length != 0) {
             _text = text;
-        else
+            [self updateTextType];
+            
+            _isLikeable = ((_textType == WMTextTypeDate)||(_textType == WMTextTypeTime)||(_textType == WMTextTypeLocation));
+            _isLiked = false;
+        }
+        else {
             _text = @" ";
+            _textType = WMTextTypePlain;
+        }
     }
 }
 
@@ -133,6 +158,36 @@
     }
     
     return result;
+}
+
+-(void)updateTextType
+{
+    _textType = WMTextTypePlain;
+    
+    NSRange r;
+    r = [_text rangeOfString:@"📅"];
+    if (r.location != NSNotFound) {
+        _textType = WMTextTypeDate;
+    }
+    else {
+        r = [_text rangeOfString:@"🕑"];
+        if (r.location != NSNotFound) {
+            _textType = WMTextTypeTime;
+        }
+        else {
+            r = [_text rangeOfString:@"📍"];
+            if (r.location != NSNotFound) {
+                _textType = WMTextTypeLocation;
+            }
+        }
+    }
+}
+
+-(BOOL)switchLikeState
+{
+    _isLiked = !_isLiked;
+    
+    return _isLiked;
 }
 
 @end

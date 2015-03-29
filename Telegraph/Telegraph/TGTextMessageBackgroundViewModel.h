@@ -10,7 +10,9 @@
 
 typedef enum {
     TGTextMessageBackgroundIncoming = 0,
-    TGTextMessageBackgroundOutgoing = 1
+    TGTextMessageBackgroundOutgoing = 1,
+    TGTextMessageBackgroundIncomingLikeable = 2,
+    TGTextMessageBackgroundOutgoingLikeable = 3
 } TGTextMessageBackgroundType;
 
 @interface TGTextMessageBackgroundViewModel : TGModernImageViewModel
@@ -24,5 +26,7 @@ typedef enum {
 
 - (void)setHighlightedIfBound;
 - (void)clearHighlight;
+
+- (void)switchLikeToggle;
 
 @end

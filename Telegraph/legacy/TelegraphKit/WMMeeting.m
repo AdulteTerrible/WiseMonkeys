@@ -24,12 +24,18 @@
 {
     if (self = [super init]) {
         self.meetingDescription = @"";
+        
         self.date = @"";
         self.dateIsToBeDiscussed = true;
+        self.dateOptions = [[NSMutableDictionary alloc] init];
+        
         self.time = @"";
         self.timeIsToBeDiscussed = true;
+        self.timeOptions = [[NSMutableDictionary alloc] init];
+        
         self.location = @"";
         self.locationIsToBeDiscussed = true;
+        self.timeOptions = [[NSMutableDictionary alloc] init];
     }
     return self;
 }

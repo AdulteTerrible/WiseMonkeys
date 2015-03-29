@@ -72,6 +72,7 @@ static CTFontRef textFontForSize(CGFloat size)
         _textModel.layoutFlags = TGReusableLabelLayoutMultiline | TGReusableLabelLayoutHighlightLinks | TGReusableLabelLayoutDateSpacing | (_incoming ? 0 : TGReusableLabelLayoutExtendedDateSpacing);
         if (message.isBroadcast)
             _textModel.additionalTrailingWidth += 10.0f;
+        
         [_contentModel addSubmodel:_textModel];
     }
     return self;
@@ -120,8 +121,17 @@ static CTFontRef textFontForSize(CGFloat size)
                 else
                     [_context.companionHandle requestAction:@"messageSelectionRequested" options:@{@"mid": @(_mid)}];
             }
-            else if (recognizer.doubleTapped)
-                [_context.companionHandle requestAction:@"messageSelectionRequested" options:@{@"mid": @(_mid)}];
+            else if (recognizer.doubleTapped) {
+                if (_textModel.isLikeable) {
+                    bool newState = [_textModel switchLikeState];
+                    [_context.companionHandle requestAction:@"messageLikeToggleRequested" options:@{@"mid": @(_mid), @"text":_textModel.text, @"change":newState?@"+":@"-"}];
+                    TGLog(_textModel.text);
+                    // BROADCAST LIKE STATE
+                }
+                else {
+                    [_context.companionHandle requestAction:@"messageSelectionRequested" options:@{@"mid": @(_mid)}];
+                }
+            }
             else if (linkCandidate != nil)
                 [_context.companionHandle requestAction:@"openLinkRequested" options:@{@"url": linkCandidate}];
             else if (_forwardedHeaderModel && CGRectContainsPoint(_forwardedHeaderModel.frame, point))

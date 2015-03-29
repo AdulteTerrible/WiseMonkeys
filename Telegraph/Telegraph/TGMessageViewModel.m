@@ -228,6 +228,10 @@ void TGUpdateMessageViewModelLayoutConstants()
 {
 }
 
+- (void)switchLikeToggleWithViewStorage:(TGModernViewStorage *)viewStorage
+{
+}
+
 - (void)updateProgress:(bool)__unused progressVisible progress:(float)__unused progress viewStorage:(TGModernViewStorage *)__unused viewStorage animated:(bool)__unused animated
 {
 }

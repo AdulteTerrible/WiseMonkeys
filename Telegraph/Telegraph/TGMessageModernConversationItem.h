@@ -43,6 +43,7 @@ extern int32_t TGMessageModernConversationItemLocalUserId;
 - (void)updateEditingState:(TGModernViewStorage *)viewStorage animationDelay:(NSTimeInterval)animationDelay;
 - (void)imageDataInvalidated:(NSString *)imageUrl;
 - (void)setTemporaryHighlighted:(bool)temporaryHighlighted viewStorage:(TGModernViewStorage *)viewStorage;
+- (void)switchLikeToggleWithViewStorage:(TGModernViewStorage *)viewStorage;
 
 - (CGRect)effectiveContentFrame;
 - (UIView *)referenceViewForImageTransition;

@@ -106,44 +106,6 @@
     
     _stripeLayer.frame = CGRectMake(0.0f, self.frame.size.height - TGRetinaPixel, self.frame.size.width, TGRetinaPixel);
     
-    float maxWidth = (self.frame.size.width-4*_margin)/3;
-    
-    if (_dateButton) {
-        _dateButton.frame = CGRectMake(_margin,
-                                       40.0f,
-                                       MIN(_dateButton.frame.size.width, maxWidth),
-                                       _dateButton.frame.size.height);
-    }
-    if (_dateLabel){
-        _dateLabel.frame = CGRectMake(_margin,
-                                      40.0f,
-                                      MIN(maxWidth, _dateLabel.frame.size.width),
-                                      _dateLabel.frame.size.height);
-    }
-    if (_timeButton) {
-        _timeButton.frame = CGRectMake((self.frame.size.width - MIN(_timeButton.frame.size.width, maxWidth))/2,
-                                       40.0f,
-                                       MIN(_timeButton.frame.size.width, maxWidth),
-                                       _timeButton.frame.size.height);
-    }
-    if (_timeLabel) {
-        _timeLabel.frame = CGRectMake((self.frame.size.width - MIN(maxWidth, _timeLabel.frame.size.width))/2,
-                                       40.0f,
-                                       MIN(maxWidth, _timeLabel.frame.size.width),
-                                       _timeLabel.frame.size.height);
-    }
-    if (_locationButton) {
-        _locationButton.frame = CGRectMake(self.frame.size.width - MIN(maxWidth, _locationButton.frame.size.width) - _margin,
-                                           40.0f,
-                                           MIN(maxWidth, _locationButton.frame.size.width),
-                                           _locationButton.frame.size.height);
-    }
-    if (_locationLabel) {
-        _locationLabel.frame = CGRectMake(self.frame.size.width - MIN(maxWidth, _locationLabel.frame.size.width) - _margin,
-                                           40.0f,
-                                           MIN(maxWidth, _locationLabel.frame.size.width),
-                                           _locationLabel.frame.size.height);
-    }
     _moreButton.frame = CGRectMake(self.frame.size.width - _moreButton.frame.size.width - _margin,
                                    0.0f,
                                    _moreButton.frame.size.width,
@@ -153,6 +115,53 @@
                                          0.0f,
                                          self.frame.size.width - _moreButton.frame.size.width - 2*_margin,
                                          _moreButton.frame.size.height);
+    
+    float maxWidth = (self.frame.size.width-4*_margin)/3;
+    
+    // starting with center: time, likely to be smaller
+    float timeWidth =0;
+    if (_timeButton) {
+        _timeButton.frame = CGRectMake((self.frame.size.width - MIN(_timeButton.frame.size.width, maxWidth))/2,
+                                       40.0f,
+                                       MIN(_timeButton.frame.size.width, maxWidth),
+                                       _timeButton.frame.size.height);
+        timeWidth = _timeButton.frame.size.width;
+    }
+    if (_timeLabel) {
+        _timeLabel.frame = CGRectMake((self.frame.size.width - MIN(maxWidth, _timeLabel.frame.size.width))/2,
+                                      40.0f,
+                                      MIN(maxWidth, _timeLabel.frame.size.width),
+                                      _timeLabel.frame.size.height);
+        timeWidth = _timeLabel.frame.size.width;
+    }
+
+    // use the rest of total width for the 2 other fields
+    float w = (self.frame.size.width - timeWidth - 4*_margin)/2;
+    
+    if (_dateButton) {
+        _dateButton.frame = CGRectMake(_margin,
+                                       40.0f,
+                                       MIN(_dateButton.frame.size.width, w),
+                                       _dateButton.frame.size.height);
+    }
+    if (_dateLabel){
+        _dateLabel.frame = CGRectMake(_margin,
+                                      40.0f,
+                                      MIN(_dateLabel.frame.size.width, w),
+                                      _dateLabel.frame.size.height);
+    }
+    if (_locationButton) {
+        _locationButton.frame = CGRectMake(self.frame.size.width - MIN(w, _locationButton.frame.size.width) - _margin,
+                                           40.0f,
+                                           MIN(_locationButton.frame.size.width, w),
+                                           _locationButton.frame.size.height);
+    }
+    if (_locationLabel) {
+        _locationLabel.frame = CGRectMake(self.frame.size.width - MIN(w, _locationLabel.frame.size.width) - _margin,
+                                           40.0f,
+                                           MIN(w, _locationLabel.frame.size.width),
+                                           _locationLabel.frame.size.height);
+    }
 }
 
 - (void)tintColorDidChange

@@ -668,6 +668,7 @@
 		BE52443C1AC81BE700D119FF /* ModernBubbleIncomingFullNotLiked@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE5244341AC81BE700D119FF /* ModernBubbleIncomingFullNotLiked@2x.png */; };
 		BE52443D1AC81BE700D119FF /* ModernBubbleIncomingPartialLiked@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE5244351AC81BE700D119FF /* ModernBubbleIncomingPartialLiked@2x.png */; };
 		BE52443E1AC81BE700D119FF /* ModernBubbleIncomingFullLiked@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE5244361AC81BE700D119FF /* ModernBubbleIncomingFullLiked@2x.png */; };
+		BE5244411AC84E8600D119FF /* WMMeetingScreenController.m in Sources */ = {isa = PBXBuildFile; fileRef = BE5244401AC84E8600D119FF /* WMMeetingScreenController.m */; };
 		BE6A13411ABCD9F000BEF0AD /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BE6A13401ABCD9F000BEF0AD /* Images.xcassets */; };
 		D00040A515BCD2EA00AF9EBF /* TGMessage+Telegraph.m in Sources */ = {isa = PBXBuildFile; fileRef = D00040A415BCD2EA00AF9EBF /* TGMessage+Telegraph.m */; };
 		D00040AC15BCD53900AF9EBF /* TGImageInfo+Telegraph.mm in Sources */ = {isa = PBXBuildFile; fileRef = D00040AB15BCD53900AF9EBF /* TGImageInfo+Telegraph.mm */; };
@@ -2773,6 +2774,8 @@
 		BE5244341AC81BE700D119FF /* ModernBubbleIncomingFullNotLiked@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "ModernBubbleIncomingFullNotLiked@2x.png"; path = "Resources/ModernBubbleIncomingFullNotLiked@2x.png"; sourceTree = "<group>"; };
 		BE5244351AC81BE700D119FF /* ModernBubbleIncomingPartialLiked@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "ModernBubbleIncomingPartialLiked@2x.png"; path = "Resources/ModernBubbleIncomingPartialLiked@2x.png"; sourceTree = "<group>"; };
 		BE5244361AC81BE700D119FF /* ModernBubbleIncomingFullLiked@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "ModernBubbleIncomingFullLiked@2x.png"; path = "Resources/ModernBubbleIncomingFullLiked@2x.png"; sourceTree = "<group>"; };
+		BE52443F1AC84E8600D119FF /* WMMeetingScreenController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMMeetingScreenController.h; sourceTree = "<group>"; };
+		BE5244401AC84E8600D119FF /* WMMeetingScreenController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WMMeetingScreenController.m; sourceTree = "<group>"; };
 		BE6A13401ABCD9F000BEF0AD /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		BE6A13431ABCE17B00BEF0AD /* TGAppConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TGAppConfiguration.h; sourceTree = "<group>"; };
 		D00040A315BCD2EA00AF9EBF /* TGMessage+Telegraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "TGMessage+Telegraph.h"; sourceTree = "<group>"; };
@@ -5153,8 +5156,6 @@
 		932E010A184CD38B0001D109 /* Generic */ = {
 			isa = PBXGroup;
 			children = (
-				BE5244021AC49B3700D119FF /* WMModernConversationGenericMeetingPanel.h */,
-				BE5244031AC49B3700D119FF /* WMModernConversationGenericMeetingPanel.m */,
 				9352A9D6181DBE9A002A1A1A /* TGGenericModernConversationCompanion.h */,
 				9352A9D7181DBE9A002A1A1A /* TGGenericModernConversationCompanion.mm */,
 				932E0111184CE1E10001D109 /* TGModernConversationGenericTitlePanel.h */,
@@ -7785,6 +7786,10 @@
 		D08805D6156E8FB800311537 /* User Interface */ = {
 			isa = PBXGroup;
 			children = (
+				BE5244021AC49B3700D119FF /* WMModernConversationGenericMeetingPanel.h */,
+				BE5244031AC49B3700D119FF /* WMModernConversationGenericMeetingPanel.m */,
+				BE52443F1AC84E8600D119FF /* WMMeetingScreenController.h */,
+				BE5244401AC84E8600D119FF /* WMMeetingScreenController.m */,
 				BE5243F11ABF8A9F00D119FF /* WMTextCollectionItem.h */,
 				BE5243F21ABF8A9F00D119FF /* WMTextCollectionItem.m */,
 				BE5243F31ABF8A9F00D119FF /* WMTextCollectionItemView.h */,
@@ -12269,6 +12274,7 @@
 				9386E8A1185D0CF200930205 /* TGAddToExistingContactController.m in Sources */,
 				D006D6DF190799520016B45C /* UIImage+TG.m in Sources */,
 				D098415619CB9BE200CE5BB0 /* TLRPCmessages_setTyping.mm in Sources */,
+				BE5244411AC84E8600D119FF /* WMMeetingScreenController.m in Sources */,
 				D09840E119CB9BE200CE5BB0 /* TLNearestDc.mm in Sources */,
 				D0EA69761A08E46600D1F747 /* TLInputPrivacyKey.mm in Sources */,
 				D098412F19CB9BE200CE5BB0 /* TLRPChelp_getAppUpdate.mm in Sources */,

@@ -69,7 +69,7 @@
 #import "TGWebSearchController.h"
 #import "TGWebSearchInternalImageResult.h"
 
-//#import "WMModernConversationGenericMeetingPanel.h"
+#import "WMMeetingScreenController.h"
 
 #import <map>
 #import <vector>
@@ -2544,6 +2544,13 @@ typedef enum {
     {
         TGModernConversationController *controller = self.controller;
         [controller setInputText:options[@"text"] replace:true];
+    }
+    if ([action isEqualToString:@"showMeetingScreen"])
+    {
+        WMMeetingScreenController *groupInfoController = [[WMMeetingScreenController alloc] initWithMeeting:_meeting];
+        
+        TGModernConversationController *controller = self.controller;
+        [controller.navigationController pushViewController:groupInfoController animated:true];
     }
     else if ([action isEqualToString:@"userAvatarTapped"])
     {

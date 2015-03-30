@@ -116,7 +116,8 @@
                                          self.frame.size.width - _moreButton.frame.size.width - 2*_margin,
                                          _moreButton.frame.size.height);
     
-    float maxWidth = (self.frame.size.width-4*_margin)/3;
+    //float maxWidth = (self.frame.size.width-2*_margin)/3;
+    float maxWidth = (self.frame.size.width - 2*_margin)/3;
     
     // starting with center: time, likely to be smaller
     float timeWidth =0;
@@ -136,7 +137,7 @@
     }
 
     // use the rest of total width for the 2 other fields
-    float w = (self.frame.size.width - timeWidth - 4*_margin)/2;
+    float w = (self.frame.size.width - timeWidth - 2*_margin)/2;
     
     if (_dateButton) {
         _dateButton.frame = CGRectMake(_margin,
@@ -185,7 +186,11 @@
     if (_meeting.dateIsToBeDiscussed) {
         _dateButton = [[TGModernButton alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 23.0f, 23.0f)];
         _dateButton.titleLabel.font = _smallFont;
-        [_dateButton setTitle:@"📅 Suggest" forState:UIControlStateNormal];
+        if ([_meeting.dateOptions count]>0) {
+            [_dateButton setTitle:[[NSString alloc] initWithFormat:@"📅(%d) Suggest", [_meeting.dateOptions count]] forState:UIControlStateNormal];
+        }
+        else
+            [_dateButton setTitle:@"📅 Suggest" forState:UIControlStateNormal];
         [_dateButton setTitleColor:self.tintColor forState:UIControlStateNormal];
         [_dateButton addTarget:self action:@selector(dateButtonPressed) forControlEvents:UIControlEventTouchUpInside];
         [_dateButton setContentEdgeInsets:UIEdgeInsetsMake(0, 0, 0, 20.0f)];
@@ -204,7 +209,11 @@
     if (_meeting.timeIsToBeDiscussed) {
         _timeButton = [[TGModernButton alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 23.0f, 23.0f)];
         _timeButton.titleLabel.font = _smallFont;
-        [_timeButton setTitle:@"🕑 Suggest" forState:UIControlStateNormal];
+        if ([_meeting.timeOptions count]>0) {
+            [_timeButton setTitle:[[NSString alloc] initWithFormat:@"🕑(%d) Suggest", [_meeting.timeOptions count]] forState:UIControlStateNormal];
+        }
+        else
+            [_timeButton setTitle:@"🕑 Suggest" forState:UIControlStateNormal];
         [_timeButton setTitleColor:self.tintColor forState:UIControlStateNormal];
         [_timeButton addTarget:self action:@selector(timeButtonPressed) forControlEvents:UIControlEventTouchUpInside];
         [_timeButton setContentEdgeInsets:UIEdgeInsetsMake(0, 0, 0, 20.0f)];
@@ -223,7 +232,11 @@
     if (_meeting.locationIsToBeDiscussed) {
         _locationButton = [[TGModernButton alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 23.0f, 23.0f)];
         _locationButton.titleLabel.font = _smallFont;
-        [_locationButton setTitle:@"📍 Suggest" forState:UIControlStateNormal];
+        if ([_meeting.locationOptions count]>0) {
+            [_locationButton setTitle:[[NSString alloc] initWithFormat:@"📍(%d) Suggest", [_meeting.locationOptions count]] forState:UIControlStateNormal];
+        }
+        else
+            [_timeButton setTitle:@"📍 Suggest" forState:UIControlStateNormal];
         [_locationButton setTitleColor:self.tintColor forState:UIControlStateNormal];
         [_locationButton addTarget:self action:@selector(locationButtonPressed) forControlEvents:UIControlEventTouchUpInside];
         [_locationButton setContentEdgeInsets:UIEdgeInsetsMake(0, 0, 0, 20.0f)];
@@ -259,9 +272,7 @@
 
 - (void)moreButtonPressed
 {
-    //id<TGModernConversationEditingPanelDelegate> delegate = (id<TGModernConversationEditingPanelDelegate>)self.delegate;
-    //if ([delegate respondsToSelector:@selector(editingPanelRequestedForwardMessages:)])
-    //    [delegate editingPanelRequestedForwardMessages:self];
+    [_companionHandle requestAction:@"showMeetingScreen" options:@{@"text": @"📍"}];
 }
 
 

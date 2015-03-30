@@ -278,6 +278,7 @@ static void dispatchOnMessageQueue(dispatch_block_t block, bool synchronous)
                             }
                         }
                     }
+                    //[self _createOrUpdateMeetingTitlePanel:true];
                     return true;
                 }
             }

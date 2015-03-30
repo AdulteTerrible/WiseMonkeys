@@ -129,6 +129,14 @@
     }
 }
 
+- (void)showMeetingScreen
+{
+    TGBroadcastListInfoController *groupInfoController = [[TGBroadcastListInfoController alloc] initWithConversationId:_conversationId];
+    
+    TGModernConversationController *controller = self.controller;
+    [controller.navigationController pushViewController:groupInfoController animated:true];
+}
+
 - (NSDictionary *)userActivityData
 {
     return nil;

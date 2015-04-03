@@ -36,9 +36,9 @@
         _textField.backgroundColor = [UIColor clearColor];
         _textField.textAlignment = NSTextAlignmentLeft;
         _textField.textColor = [UIColor blackColor];
-        _textField.autocorrectionType = UITextAutocorrectionTypeNo;
-        _textField.autocapitalizationType = UITextAutocapitalizationTypeNone;
-        _textField.spellCheckingType = UITextSpellCheckingTypeNo;
+        //_textField.autocorrectionType = UITextAutocorrectionTypeNo;
+        //_textField.autocapitalizationType = UITextAutocapitalizationTypeNone;
+        //_textField.spellCheckingType = UITextSpellCheckingTypeNo;
         _textField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
         _textField.keyboardType = UIKeyboardTypeDefault;
         

@@ -233,10 +233,10 @@ static void dispatchOnMessageQueue(dispatch_block_t block, bool synchronous)
                             else {
                                 int i = [string intValue];
                                 if ([contact.lastName isEqualToString:@"+"]) {
-                                    [_meeting.dateOptions setObject:[NSString stringWithFormat:@"%d",i++] forKey:contact.firstName];
+                                    [_meeting.dateOptions setObject:[NSString stringWithFormat:@"%d",++i] forKey:contact.firstName];
                                 }
                                 else {
-                                    [_meeting.dateOptions setObject:[NSString stringWithFormat:@"%d",i--] forKey:contact.firstName];
+                                    [_meeting.dateOptions setObject:[NSString stringWithFormat:@"%d",--i] forKey:contact.firstName];
                                 }
                             }
                         }
@@ -250,10 +250,10 @@ static void dispatchOnMessageQueue(dispatch_block_t block, bool synchronous)
                                 else {
                                     int i = [string intValue];
                                     if ([contact.lastName isEqualToString:@"+"]) {
-                                        [_meeting.timeOptions setObject:[NSString stringWithFormat:@"%d",i++] forKey:contact.firstName];
+                                        [_meeting.timeOptions setObject:[NSString stringWithFormat:@"%d",++i] forKey:contact.firstName];
                                     }
                                     else {
-                                        [_meeting.timeOptions setObject:[NSString stringWithFormat:@"%d",i--] forKey:contact.firstName];
+                                        [_meeting.timeOptions setObject:[NSString stringWithFormat:@"%d",--i] forKey:contact.firstName];
                                     }
                                 }
                             }
@@ -267,10 +267,10 @@ static void dispatchOnMessageQueue(dispatch_block_t block, bool synchronous)
                                     else {
                                         int i = [string intValue];
                                         if ([contact.lastName isEqualToString:@"+"]) {
-                                            [_meeting.locationOptions setObject:[NSString stringWithFormat:@"%d",i++] forKey:contact.firstName];
+                                            [_meeting.locationOptions setObject:[NSString stringWithFormat:@"%d",++i] forKey:contact.firstName];
                                         }
                                         else {
-                                            [_meeting.locationOptions setObject:[NSString stringWithFormat:@"%d",i--] forKey:contact.firstName];
+                                            [_meeting.locationOptions setObject:[NSString stringWithFormat:@"%d",--i] forKey:contact.firstName];
                                         }
                                     }
 
@@ -1490,28 +1490,30 @@ static void dispatchOnMessageQueue(dispatch_block_t block, bool synchronous)
             if (existingMids.find(message.mid) != existingMids.end())
                 continue;
             
-            int date = (int)message.date;
-            int32_t mid = message.mid;
-            bool inserted = false;
+            if (![self isMeetingIncludedIn:message]) {
+                int date = (int)message.date;
+                int32_t mid = message.mid;
+                bool inserted = false;
             
-            int index = -1;
-            for (TGMessageModernConversationItem *messageItem in _items)
-            {
-                index++;
-                
-                int itemDate = (int)messageItem->_message.date;
-                if (itemDate < date || (itemDate == date && messageItem->_message.mid < mid))
+                int index = -1;
+                for (TGMessageModernConversationItem *messageItem in _items)
                 {
-                    if (![self isMeetingIncludedIn:message]) {
+                    index++;
+                
+                    int itemDate = (int)messageItem->_message.date;
+                    if (itemDate < date || (itemDate == date && messageItem->_message.mid < mid))
+                    {
+                    //if (![self isMeetingIncludedIn:message]) {
                         [insertArray insertObject:[[TGMessageModernConversationItem alloc] initWithMessage:message context:_viewContext] atIndex:index];
                         inserted = true;
-                    }
+                    //}
                     break;
+                    }
                 }
-            }
-            if (!inserted) {
-                if (![self isMeetingIncludedIn:message]) {
+                if (!inserted) {
+                //if (![self isMeetingIncludedIn:message]) {
                     [insertArray insertObject:[[TGMessageModernConversationItem alloc] initWithMessage:message context:_viewContext] atIndex:_items.count];
+                //}
                 }
             }
         }

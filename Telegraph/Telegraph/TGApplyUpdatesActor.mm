@@ -933,6 +933,17 @@ static int64_t extractMessageConversationId(T concreteMessage, int &outFromUid)
                                 
                                 break;
                             }
+                            else if (attachment.type == TGMeetingMediaAttachmentType)
+                            {
+                                if (message.cid > 0)
+                                    text = [[NSString alloc] initWithFormat:TGLocalized(@"MESSAGE_MEET"), user.displayName];
+                                else
+                                    text = [[NSString alloc] initWithFormat:TGLocalized(@"CHAT_MESSAGE_MEET"), user.displayName, chatName];
+                                
+                                attachmentFound = true;
+                                
+                                break;
+                            }
                             else if (attachment.type == TGLocationMediaAttachmentType)
                             {
                                 if (message.cid > 0)

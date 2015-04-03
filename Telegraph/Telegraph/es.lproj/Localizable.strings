@@ -400,6 +400,7 @@
 "Conversation.DownloadProgressKilobytes" = "%1$dKb / %2$dKb";
 "Conversation.ViewLocation" = "Ver ubicación";
 "Conversation.SearchWebImages" = "Buscar imágenes";
+"Conversation.MeetingProposal" = "Cita";
 "Conversation.ShareMyContactInfo" = "Compartir mi número";
 "Conversation.AddContact" = "Añadir contacto";
 "Conversation.SendMessage" = "Enviar mensaje";

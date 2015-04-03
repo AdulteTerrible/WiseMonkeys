@@ -27,6 +27,7 @@
 #import "TGPreparedMessage.h"
 #import "TGPreparedTextMessage.h"
 #import "TGPreparedMapMessage.h"
+#import "WMPreparedMeetingMessage.h"
 #import "TGPreparedLocalImageMessage.h"
 #import "TGPreparedRemoteImageMessage.h"
 #import "TGPreparedLocalVideoMessage.h"
@@ -67,6 +68,8 @@
 #import "TGModernSendCommonMessageActor.h"
 #import "TGWebSearchController.h"
 #import "TGWebSearchInternalImageResult.h"
+
+#import "WMMeetingScreenController.h"
 
 #import <map>
 #import <vector>
@@ -112,6 +115,8 @@ typedef enum {
     NSUInteger _layer;
     
     NSString *_currentStickerSearchPath;
+    
+    //WMModernConversationGenericMeetingPanel *_meetingPanel;
 }
 
 @end
@@ -1148,6 +1153,32 @@ typedef enum {
     }];
 }
 
+- (void)controllerWantsToSendMeetingWithDescription:(NSString*)text date:(NSString*)d time:(NSString*)t location:(NSString*)l
+{
+    _meeting.meetingDescription = text;
+    
+    _meeting.dateIsToBeDiscussed = ([d isEqual:[NSNull null]]);
+    if (!_meeting.dateIsToBeDiscussed)
+        _meeting.date = d;
+    
+    _meeting.timeIsToBeDiscussed = ([t isEqual:[NSNull null]]);
+    if (!_meeting.timeIsToBeDiscussed)
+        _meeting.time = t;
+    
+    _meeting.locationIsToBeDiscussed = ([l isEqual:[NSNull null]]);
+    if (!_meeting.locationIsToBeDiscussed)
+        _meeting.location = l;
+
+
+    // the RPCs for my own "meeting type" get rejected by server
+    // so haacking the contact transmission
+    TGUser* fake = [[TGUser alloc] init];
+    fake.firstName = [[NSString alloc] initWithFormat:@"%@;%@", text,d];
+    fake.lastName = [[NSString alloc] initWithFormat:@"%@;%@", t,l];
+    fake.phoneNumber = @"11111111";
+    [self controllerWantsToSendContact:fake];
+}
+
 - (NSURL *)fileUrlForDocumentMedia:(TGDocumentMediaAttachment *)documentMedia
 {
     if (documentMedia.localDocumentId != 0)
@@ -1644,6 +1675,19 @@ typedef enum {
         {
             switch (attachment.type)
             {
+                case TGMeetingMediaAttachmentType:
+                {
+                    WMMeetingMediaAttachment *meetingAttachment = (WMMeetingMediaAttachment *)attachment;
+                    WMPreparedMeetingMessage *meetingMessage = [[WMPreparedMeetingMessage alloc] initWithDescription:meetingAttachment.descriptionString
+                                                                                                                date:meetingAttachment.dateString
+                                                                                                                time:meetingAttachment.timeString
+                                                                                                            location:meetingAttachment.locationString];
+                    if (!copyAssetsData)
+                        meetingMessage.replacingMid = message.mid;
+                    [preparedMessages addObject:meetingMessage];
+                    messageAdded = true;
+                    break;
+                }
                 case TGLocationMediaAttachmentType:
                 {
                     TGLocationMediaAttachment *locationAttachment = (TGLocationMediaAttachment *)attachment;
@@ -2496,7 +2540,19 @@ typedef enum {
 
 - (void)actionStageActionRequested:(NSString *)action options:(id)options
 {
-    if ([action isEqualToString:@"userAvatarTapped"])
+    if ([action isEqualToString:@"insertTextInInputPanel"])
+    {
+        TGModernConversationController *controller = self.controller;
+        [controller setInputText:options[@"text"] replace:true];
+    }
+    if ([action isEqualToString:@"showMeetingScreen"])
+    {
+        WMMeetingScreenController *groupInfoController = [[WMMeetingScreenController alloc] initWithMeeting:_meeting];
+        
+        TGModernConversationController *controller = self.controller;
+        [controller.navigationController pushViewController:groupInfoController animated:true];
+    }
+    else if ([action isEqualToString:@"userAvatarTapped"])
     {
         if ([options[@"uid"] intValue] > 0)
             [[TGInterfaceManager instance] navigateToProfileOfUser:[options[@"uid"] intValue]];

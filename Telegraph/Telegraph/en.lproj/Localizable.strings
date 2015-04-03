@@ -12,6 +12,8 @@
 "ENCRYPTION_ACCEPT" = "Your encryption request was accepted%1$@";
 "DC_UPDATE" = "Open this notification to update app settings";
 
+"MESSAGE_MEET" = "%1$@ sent you a get-together";
+
 "CHAT_MESSAGE_TEXT" = "%1$@@%2$@: %3$@";
 "CHAT_MESSAGE_NOTEXT" = "%1$@ sent a message to the group %2$@";
 "CHAT_MESSAGE_PHOTO" = "%1$@ sent a photo to the group %2$@";
@@ -29,6 +31,8 @@
 "CHAT_DELETE_MEMBER" = "%1$@ kicked %3$@ from the group %2$@";
 "CHAT_LEFT" = "%1$@ left the group %2$@";
 "CHAT_RETURNED" = "%1$@ returned to the group %2$@";
+
+"CHAT_MESSAGE_MEET" = "%1$@ sent a get-together to the group %2$@";
 
 "MESSAGE_STICKER" = "%1$@ sent you a sticker";
 "CHAT_MESSAGE_STICKER" = "%1$@ sent a sticker to the group %2$@";
@@ -377,6 +381,8 @@
 "Message.ForwardedMessage" = "Forwarded Message\nFrom: %@";
 "Message.SharedContact" = "Shared Contact";
 
+"Message.Meeting" = "Get-together";
+
 // Conversation Profile
 "ConversationProfile.ErrorCreatingConversation" = "An error occurred";
 "ConversationProfile.UserLeftChatError" = "Sorry, %@ decided to leave this group, so you cannot invite him back here.";
@@ -400,6 +406,7 @@
 "Conversation.DownloadProgressKilobytes" = "%1$dKb / %2$dKb";
 "Conversation.ViewLocation" = "View Location";
 "Conversation.SearchWebImages" = "Find Images";
+"Conversation.MeetingProposal" = "Get-Together";
 "Conversation.ShareMyContactInfo" = "Share My Contact Info";
 "Conversation.AddContact" = "Add Contact";
 "Conversation.SendMessage" = "Send Message";
@@ -532,6 +539,19 @@
 "Map.ForwardViaTelegram" = "Forward via Telegram";
 "Map.GetDirections" = "Get Directions";
 "Map.OpenInGoogleMaps" = "Open in Google Maps";
+
+// Meeting
+"Meeting.Title" = "New Get-Together";
+"Meeting.Send" = "Send";
+"Meeting.Description" = "INVITATION";
+"Meeting.Date" = "DATE";
+"Meeting.Time" = "TIME";
+"Meeting.Location" = "LOCATION";
+"Meeting.isToBeDiscussed" = "Let the group decide";
+"ChangeDescription.DescriptionPlaceholder" = "Type a message";
+"ChangeDate.DatePlaceholder" = "Which day will you meet?";
+"ChangeTime.TimePlaceholder" = "At what time will you meet?";
+"ChangeLocation.LocationPlaceholder" = "Where will you meet?";
 
 // Web
 "Web.Error" = "Couldn't load page";

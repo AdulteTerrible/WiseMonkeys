@@ -923,6 +923,13 @@ static UIColor *mediaTextColor = nil;
                 attachmentFound = true;
                 break;
             }
+            else if (attachment.type == TGMeetingMediaAttachmentType)
+            {
+                _messageText = TGLocalized(@"Message.Meeting");
+                _messageTextColor = mediaTextColor;
+                attachmentFound = true;
+                break;
+            }
             else if (attachment.type == TGLocationMediaAttachmentType)
             {
                 _messageText = TGLocalized(@"Message.Location");

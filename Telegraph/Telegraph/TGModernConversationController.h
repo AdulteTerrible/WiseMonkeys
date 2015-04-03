@@ -60,6 +60,7 @@ typedef enum {
 - (void)openBrowserFromMessage:(int32_t)messageId url:(NSString *)url;
 - (void)showActionsMenuForUnsentMessage:(int32_t)messageId;
 - (void)highlightAndShowActionsMenuForMessage:(int32_t)messageId;
+- (void)switchLikeToggleForMessage:(int32_t)messageId;
 - (void)showActionsMenuForLink:(NSString *)url;
 - (void)showActionsMenuForContact:(TGUser *)contact isContact:(bool)isContact;
 - (void)showAddContactMenu:(TGUser *)contact;
@@ -84,6 +85,7 @@ typedef enum {
 - (void)setGlobalUnreadCount:(int)unreadCount;
 - (void)setCustomInputPanel:(TGModernConversationInputPanel *)customInputPanel;
 - (void)setPrimaryTitlePanel:(TGModernConversationTitlePanel *)titlePanel;
+- (void)setMeetingTitlePanel:(TGModernConversationTitlePanel *)meetingPanel;
 - (TGModernConversationTitlePanel *)primaryTitlePanel;
 - (void)setSecondaryTitlePanel:(TGModernConversationTitlePanel *)secondaryTitlePanel;
 - (void)setSecondaryTitlePanel:(TGModernConversationTitlePanel *)secondaryTitlePanel animated:(bool)animated;

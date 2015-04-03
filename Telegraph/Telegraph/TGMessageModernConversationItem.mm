@@ -193,6 +193,11 @@ static UIColor *coloredNameForUid(int uid, __unused int currentUserId)
     [_viewModel setTemporaryHighlighted:temporaryHighlighted viewStorage:viewStorage];
 }
 
+- (void)switchLikeToggleWithViewStorage:(TGModernViewStorage *)viewStorage
+{
+    [_viewModel switchLikeToggleWithViewStorage:viewStorage];
+}
+
 - (CGRect)effectiveContentFrame
 {
     return [_viewModel effectiveContentFrame];
@@ -383,6 +388,12 @@ static UIColor *coloredNameForUid(int uid, __unused int currentUserId)
                     model.collapseFlags = _collapseFlags;
                     [model layoutForContainerSize:containerSize];
                     return model;
+                }
+                case TGMeetingMediaAttachmentType:
+                {
+                    TGLog(@"TGMeetingMediaAttachmentType case reached");
+                    NSAssert(false, @"To be implemented");
+                    break;
                 }
                 case TGLocationMediaAttachmentType:
                 {

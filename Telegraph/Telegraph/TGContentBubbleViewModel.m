@@ -41,6 +41,29 @@
 
 @implementation TGContentBubbleViewModel
 
+-(bool)isTextLikeable:(NSString*)text
+{
+    NSRange r;
+    r = [text rangeOfString:@"📅"];
+    if (r.location != NSNotFound) {
+        return true;
+    }
+    else {
+        r = [text rangeOfString:@"🕑"];
+        if (r.location != NSNotFound) {
+            return true;
+        }
+        else {
+            r = [text rangeOfString:@"📍"];
+            if (r.location != NSNotFound) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+
 - (instancetype)initWithMessage:(TGMessage *)message author:(TGUser *)author context:(TGModernViewContext *)context
 {
     self = [super initWithAuthor:author context:context];
@@ -68,7 +91,11 @@
         _read = !message.unread;
         _date = (int32_t)message.date;
         
-        _backgroundModel = [[TGTextMessageBackgroundViewModel alloc] initWithType:_incoming ? TGTextMessageBackgroundIncoming : TGTextMessageBackgroundOutgoing];
+        if ([self isTextLikeable:message.text])
+            _backgroundModel = [[TGTextMessageBackgroundViewModel alloc] initWithType:_incoming ? TGTextMessageBackgroundIncomingLikeable : TGTextMessageBackgroundOutgoingLikeable];
+        else
+            _backgroundModel = [[TGTextMessageBackgroundViewModel alloc] initWithType:_incoming ? TGTextMessageBackgroundIncoming : TGTextMessageBackgroundOutgoing];
+        
         _backgroundModel.blendMode = kCGBlendModeCopy;
         _backgroundModel.skipDrawInContext = true;
         [self addSubmodel:_backgroundModel];
@@ -153,6 +180,11 @@
         [_backgroundModel setHighlightedIfBound];
     else
         [_backgroundModel clearHighlight];
+}
+
+- (void)switchLikeToggleWithViewStorage:(TGModernViewStorage *)__unused viewStorage
+{
+    [_backgroundModel switchLikeToggle];
 }
 
 - (void)setAuthorNameColor:(UIColor *)authorNameColor

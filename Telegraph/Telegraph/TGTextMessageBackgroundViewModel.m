@@ -28,12 +28,23 @@ TGTextMessageBackgroundImageDef(outgoingImageHighlighted, false, @"ModernBubbleO
 TGTextMessageBackgroundImageDef(outgoingPartialImage, false, @"ModernBubbleOutgoingPartial.png", @"ModernBubbleOutgoingPartialPad.png")
 TGTextMessageBackgroundImageDef(outgoingPartialImageHighlighted, false, @"ModernBubbleOutgoingPartialHighlighted.png", @"ModernBubbleOutgoingPartialHighlightedPad.png")
 
+TGTextMessageBackgroundImageDef(incomingLikedImage, true, @"ModernBubbleIncomingFullLiked.png", @"ModernBubbleIncomingFullLiked.png")
+TGTextMessageBackgroundImageDef(incomingPartialLikedImage, true, @"ModernBubbleIncomingPartialLiked.png", @"ModernBubbleIncomingPartialLiked.png")
+TGTextMessageBackgroundImageDef(outgoingLikedImage, false, @"ModernBubbleOutgoingFullLiked.png", @"ModernBubbleOutgoingFullLiked.png")
+TGTextMessageBackgroundImageDef(outgoingPartialLikedImage, false, @"ModernBubbleOutgoingPartialLiked.png", @"ModernBubbleOutgoingPartialLiked.png")
+
+TGTextMessageBackgroundImageDef(incomingNotLikedImage, true, @"ModernBubbleIncomingFullNotLiked.png", @"ModernBubbleIncomingFullNotLiked.png")
+TGTextMessageBackgroundImageDef(incomingPartialNotLikedImage, true, @"ModernBubbleIncomingPartialNotLiked.png", @"ModernBubbleIncomingPartialNotLiked.png")
+TGTextMessageBackgroundImageDef(outgoingNotLikedImage, false, @"ModernBubbleOutgoingFullNotLiked.png", @"ModernBubbleOutgoingFullNotLiked.png")
+TGTextMessageBackgroundImageDef(outgoingPartialNotLikedImage, false, @"ModernBubbleOutgoingPartialNotLiked.png", @"ModernBubbleOutgoingPartialNotLiked.png")
+
 @interface TGTextMessageBackgroundViewModel ()
 {
     TGTextMessageBackgroundType _type;
     bool _imageIsValid;
     
     bool _highlighted;
+    bool _liked;
 }
 
 @end
@@ -46,6 +57,7 @@ TGTextMessageBackgroundImageDef(outgoingPartialImageHighlighted, false, @"Modern
     if (self != nil)
     {
         _type = type;
+        _liked = false;
     }
     return self;
 }
@@ -57,7 +69,31 @@ TGTextMessageBackgroundImageDef(outgoingPartialImageHighlighted, false, @"Modern
     if (!_imageIsValid)
     {
         _imageIsValid = true;
-        self.image = _type == TGTextMessageBackgroundIncoming ? (_partialMode ? incomingPartialImage() : incomingImage()) : (_partialMode ? outgoingPartialImage() : outgoingImage());
+        //self.image = _type == TGTextMessageBackgroundIncoming ? (_partialMode ? incomingPartialImage() : incomingImage()) : (_partialMode ? outgoingPartialImage() : outgoingImage());
+        if (_type == TGTextMessageBackgroundIncoming) {
+            if (_partialMode)
+                self.image = incomingPartialImage();
+            else
+                self.image = incomingImage();
+        }
+        else if (_type == TGTextMessageBackgroundOutgoing) {
+            if (_partialMode)
+                self.image = outgoingPartialImage();
+            else
+                self.image = outgoingImage();
+        }
+        else if (_type == TGTextMessageBackgroundIncomingLikeable) {
+            if (_partialMode)
+                self.image = (_liked ? incomingPartialLikedImage() : incomingPartialNotLikedImage());
+            else
+                self.image = (_liked ? incomingLikedImage() : incomingNotLikedImage());
+        }
+        else if (_type == TGTextMessageBackgroundOutgoingLikeable) {
+            if (_partialMode)
+                self.image = (_liked? outgoingPartialLikedImage() : outgoingPartialNotLikedImage());
+            else
+                self.image = (_liked? outgoingLikedImage() : outgoingNotLikedImage());
+        }
     }
     
     [super bindViewToContainer:container viewStorage:viewStorage];
@@ -124,12 +160,26 @@ TGTextMessageBackgroundImageDef(outgoingPartialImageHighlighted, false, @"Modern
         else
             newImage = _highlighted ? incomingImageHighlighted() : incomingImage();
     }
-    else
+    else if (_type == TGTextMessageBackgroundOutgoing)
     {
         if (_partialMode)
             newImage = _highlighted ? outgoingPartialImageHighlighted() : outgoingPartialImage();
         else
             newImage = _highlighted ? outgoingImageHighlighted() : outgoingImage();
+    }
+    if (_type == TGTextMessageBackgroundIncomingLikeable)
+    {
+        if (_partialMode)
+            newImage = _highlighted ? incomingPartialImageHighlighted() : (_liked ? incomingPartialLikedImage() : incomingPartialNotLikedImage());
+        else
+            newImage = _highlighted ? incomingImageHighlighted() : (_liked ? incomingLikedImage() : incomingNotLikedImage());
+    }
+    else if (_type == TGTextMessageBackgroundOutgoingLikeable)
+    {
+        if (_partialMode)
+            newImage = _highlighted ? outgoingPartialImageHighlighted() : (_liked? outgoingPartialLikedImage() : outgoingPartialNotLikedImage());
+        else
+            newImage = _highlighted ? outgoingImageHighlighted() : (_liked? outgoingLikedImage() : outgoingNotLikedImage());
     }
     
     return newImage;
@@ -141,6 +191,18 @@ TGTextMessageBackgroundImageDef(outgoingPartialImageHighlighted, false, @"Modern
     {
         _highlighted = true;
         
+        _imageIsValid = false;
+        
+        self.image = [self currentImage];
+        ((UIImageView *)[self boundView]).image = self.image;
+    }
+}
+
+- (void)switchLikeToggle
+{
+    if ([self boundView] != nil)
+    {
+        _liked = !_liked;
         _imageIsValid = false;
         
         self.image = [self currentImage];

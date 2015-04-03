@@ -22,11 +22,13 @@
 @property (nonatomic) CGFloat additionalTrailingWidth;
 @property (nonatomic, strong) NSArray *additionalAttributes;
 @property (nonatomic, readonly) bool isRTL;
+@property (nonatomic, readonly) bool isLikeable;
 
 - (instancetype)initWithText:(NSString *)text font:(CTFontRef)font;
 
 - (bool)layoutNeedsUpdatingForContainerSize:(CGSize)containerSize;
 - (void)layoutForContainerSize:(CGSize)containerSize;
 - (NSString *)linkAtPoint:(CGPoint)point regionData:(__autoreleasing NSArray **)regionData;
+- (BOOL)switchLikeState;
 
 @end

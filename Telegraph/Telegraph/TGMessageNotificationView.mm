@@ -228,6 +228,12 @@
                 attachmentFound = true;
                 break;
             }
+            else if (attachment.type == TGMeetingMediaAttachmentType)
+            {
+                messageText = TGLocalized(@"Message.Meeting");
+                attachmentFound = true;
+                break;
+            }
             else if (attachment.type == TGLocationMediaAttachmentType)
             {
                 messageText = TGLocalized(@"Message.Location");

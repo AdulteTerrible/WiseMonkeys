@@ -95,6 +95,8 @@
 
 #import "TGProgressWindow.h"
 
+#import "WMMeetingCreationController.h"
+
 #if TARGET_IPHONE_SIMULATOR
 NSInteger TGModernConversationControllerUnloadHistoryLimit = 500;
 NSInteger TGModernConversationControllerUnloadHistoryThreshold = 200;
@@ -155,6 +157,8 @@ typedef enum {
     TGModernConversationTitlePanel *_primaryTitlePanel;
     TGModernConversationTitlePanel *_secondaryTitlePanel;
     TGModernConversationTitlePanel *_currentTitlePanel;
+    
+    TGModernConversationTitlePanel *_meetingTitlePanel;
     
     TGModernConversationEmptyListPlaceholderView *_emptyListPlaceholder;
     
@@ -1882,6 +1886,28 @@ static CGPoint locationForKeyboardWindowWithOffset(CGFloat offset, UIInterfaceOr
                     
                     break;
                 }
+                case TGMeetingMediaAttachmentType:
+                {
+                    WMMeetingMediaAttachment *meetingAttachment = (WMMeetingMediaAttachment *)attachment;
+                    
+                    NSAssert(false, @"To be implemented");
+//                    TGMapViewController *mapController = [[TGMapViewController alloc] initInMapModeWithLatitude:mapAttachment.latitude longitude:mapAttachment.longitude user:[TGDatabaseInstance() loadUser:(int32_t)mediaMessageItem->_message.fromUid]];
+//                    mapController.watcher = _companion.actionHandle;
+//                    if ([_companion allowMessageForwarding])
+//                        mapController.message = mediaMessageItem->_message;
+//                    
+//                    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone)
+//                        [self.navigationController pushViewController:mapController animated:true];
+//                    else
+//                    {
+//                        TGNavigationController *navigationController = [TGNavigationController navigationControllerWithControllers:@[mapController]];
+//                        navigationController.presentationStyle = TGNavigationControllerPresentationStyleInFormSheet;
+//                        navigationController.modalPresentationStyle = UIModalPresentationFormSheet;
+//                        [self presentViewController:navigationController animated:true completion:nil];
+//                    }
+                    
+                    break;
+                }
                 case TGLocationMediaAttachmentType:
                 {
                     TGLocationMediaAttachment *mapAttachment = (TGLocationMediaAttachment *)attachment;
@@ -2560,6 +2586,24 @@ static CGPoint locationForKeyboardWindowWithOffset(CGFloat offset, UIInterfaceOr
     }
 }
 
+- (void)switchLikeToggleForMessage:(int32_t)messageId
+{
+    TGMessageModernConversationItem *highlightedItem = nil;
+    
+    for (TGModernCollectionCell *cell in _collectionView.visibleCells)
+    {
+        TGMessageModernConversationItem *messageItem = cell.boundItem;
+        if (messageItem != nil && messageItem->_message.mid == messageId)
+        {
+            highlightedItem = messageItem;
+            [highlightedItem switchLikeToggleWithViewStorage:_viewStorage];
+            
+            break;
+        }
+    }
+}
+
+
 - (void)showActionsMenuForLink:(NSString *)url
 {
     if ([url hasPrefix:@"tel:"])
@@ -2744,6 +2788,7 @@ static CGPoint locationForKeyboardWindowWithOffset(CGFloat offset, UIInterfaceOr
             [_emptyListPlaceholder adjustLayoutForOrientation:self.interfaceOrientation contentInsets:UIEdgeInsetsMake(self.controllerInset.top, 0.0f, _currentInputPanel.frame.size.height, 0.0f) duration:0.0f curve:0];
         }
     }
+    [[_inputTextPanel inputField] becomeFirstResponder]; // haaack
 }
 
 - (NSString *)inputText
@@ -2834,6 +2879,7 @@ static CGPoint locationForKeyboardWindowWithOffset(CGFloat offset, UIInterfaceOr
 
 - (void)setPrimaryTitlePanel:(TGModernConversationTitlePanel *)titlePanel
 {
+    /*
     if (_primaryTitlePanel != titlePanel)
     {
         bool applyAsCurrent = _currentTitlePanel != nil && _currentTitlePanel == _primaryTitlePanel;
@@ -2842,11 +2888,28 @@ static CGPoint locationForKeyboardWindowWithOffset(CGFloat offset, UIInterfaceOr
         if (applyAsCurrent)
             [self setCurrentTitlePanel:titlePanel animation:ABS(CFAbsoluteTimeGetCurrent() - _willAppearTimestamp) > 0.18 ? TGModernConversationPanelAnimationSlide : TGModernConversationPanelAnimationNone];
     }
+    */
+}
+
+- (void)setMeetingTitlePanel:(TGModernConversationTitlePanel *)titlePanel
+{
+    if (_meetingTitlePanel != titlePanel)
+    {
+        _meetingTitlePanel = titlePanel;
+        
+        //[self setCurrentTitlePanel:titlePanel animation:ABS(CFAbsoluteTimeGetCurrent() - _willAppearTimestamp) > 0.18 ? TGModernConversationPanelAnimationSlide : TGModernConversationPanelAnimationNone];
+        [self setCurrentTitlePanel:_meetingTitlePanel animation:TGModernConversationPanelAnimationSlide];
+    }
 }
 
 - (TGModernConversationTitlePanel *)primaryTitlePanel
 {
     return _primaryTitlePanel;
+}
+
+- (TGModernConversationTitlePanel *)meetingTitlePanel
+{
+    return _meetingTitlePanel;
 }
 
 - (void)setSecondaryTitlePanel:(TGModernConversationTitlePanel *)secondaryTitlePanel
@@ -2856,6 +2919,7 @@ static CGPoint locationForKeyboardWindowWithOffset(CGFloat offset, UIInterfaceOr
 
 - (void)setSecondaryTitlePanel:(TGModernConversationTitlePanel *)secondaryTitlePanel animated:(bool)animated
 {
+    /*
     if (_secondaryTitlePanel != secondaryTitlePanel)
     {
         bool applyAsCurrent = _currentTitlePanel == nil || _currentTitlePanel == _secondaryTitlePanel;
@@ -2867,6 +2931,7 @@ static CGPoint locationForKeyboardWindowWithOffset(CGFloat offset, UIInterfaceOr
             [self setCurrentTitlePanel:secondaryTitlePanel animation:(animated && appearTime > 0.1) ? (appearTime > 0.4 ? TGModernConversationPanelAnimationSlide : TGModernConversationPanelAnimationFade) : TGModernConversationPanelAnimationNone];
         }
     }
+     */
 }
 
 - (TGModernConversationTitlePanel *)secondaryTitlePanel
@@ -2916,7 +2981,7 @@ static CGPoint locationForKeyboardWindowWithOffset(CGFloat offset, UIInterfaceOr
         {
             if (_titlePanelWrappingView == nil)
             {
-                _titlePanelWrappingView = [[UIView alloc] initWithFrame:CGRectMake(0.0f, self.controllerInset.top, self.view.frame.size.width, 44.0f)];
+                _titlePanelWrappingView = [[UIView alloc] initWithFrame:CGRectMake(0.0f, self.controllerInset.top, self.view.frame.size.width, 70.0f)]; // haaack
                 _titlePanelWrappingView.clipsToBounds = true;
                 [self.view addSubview:_titlePanelWrappingView];
             }
@@ -3106,6 +3171,8 @@ static CGPoint locationForKeyboardWindowWithOffset(CGFloat offset, UIInterfaceOr
 
 - (void)titleViewTapped:(TGModernConversationTitleView *)__unused titleView
 {
+    // disabled, to avoid mix up with meeting panel
+    /*
     if (_editingMode)
         return;
     
@@ -3122,6 +3189,7 @@ static CGPoint locationForKeyboardWindowWithOffset(CGFloat offset, UIInterfaceOr
         else
             [self setCurrentTitlePanel:_secondaryTitlePanel animation:TGModernConversationPanelAnimationSlide];
     }
+    */
 }
 
 - (void)editingPanelRequestedDeleteMessages:(TGModernConversationEditingPanel *)__unused editingPanel
@@ -3284,27 +3352,16 @@ static CGPoint locationForKeyboardWindowWithOffset(CGFloat offset, UIInterfaceOr
                 [strongSelf _displayPhotoVideoPicker:true];
             }
         }]];
-        [items addObject:[[TGAttachmentSheetButtonItemView alloc] initWithTitle:TGLocalized(@"Conversation.SearchWebImages") pressed:^
-        {
+        [items addObject:[[TGAttachmentSheetButtonItemView alloc] initWithTitle:TGLocalized(@"Conversation.MeetingProposal") pressed:^
+            {
             __strong TGModernConversationController *strongSelf = weakSelf;
             if (strongSelf != nil)
             {
                 [strongSelf.view endEditing:true];
                 [strongSelf->_attachmentSheetWindow dismissAnimated:true];
-                [strongSelf _displayImagePicker:true];
-            }
-        }]];
-        [items addObject:[[TGAttachmentSheetButtonItemView alloc] initWithTitle:TGLocalized(@"Conversation.Location") pressed:^
-        {
-            __strong TGModernConversationController *strongSelf = weakSelf;
-            if (strongSelf != nil)
-            {
-                [strongSelf.view endEditing:true];
-                [strongSelf->_attachmentSheetWindow dismissAnimated:true];
-
-                TGMapViewController *mapController = [[TGMapViewController alloc] initInPickingMode];
-                mapController.watcher = strongSelf.actionHandle;
-                TGNavigationController *navigationController = [TGNavigationController navigationControllerWithControllers:@[mapController]];
+                WMMeetingCreationController *meetingController = [[WMMeetingCreationController alloc] init];
+                meetingController.watcher = strongSelf.actionHandle;
+                TGNavigationController *navigationController = [TGNavigationController navigationControllerWithControllers:@[meetingController]];
                 
                 if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad)
                 {
@@ -3315,16 +3372,48 @@ static CGPoint locationForKeyboardWindowWithOffset(CGFloat offset, UIInterfaceOr
                 [strongSelf presentViewController:navigationController animated:true completion:nil];
             }
         }]];
-        [items addObject:[[TGAttachmentSheetButtonItemView alloc] initWithTitle:TGLocalized(@"Conversation.Document") pressed:^
-        {
-            __strong TGModernConversationController *strongSelf = weakSelf;
-            if (strongSelf != nil)
-            {
-                [strongSelf.view endEditing:true];
-                [strongSelf->_attachmentSheetWindow dismissAnimated:true];
-                [strongSelf _displayDocumentPicker];
-            }
-        }]];
+        
+//        [items addObject:[[TGAttachmentSheetButtonItemView alloc] initWithTitle:TGLocalized(@"Conversation.SearchWebImages") pressed:^
+//        {
+//            __strong TGModernConversationController *strongSelf = weakSelf;
+//            if (strongSelf != nil)
+//            {
+//                [strongSelf.view endEditing:true];
+//                [strongSelf->_attachmentSheetWindow dismissAnimated:true];
+//                [strongSelf _displayImagePicker:true];
+//            }
+//        }]];
+//        [items addObject:[[TGAttachmentSheetButtonItemView alloc] initWithTitle:TGLocalized(@"Conversation.Location") pressed:^
+//        {
+//            __strong TGModernConversationController *strongSelf = weakSelf;
+//            if (strongSelf != nil)
+//            {
+//                [strongSelf.view endEditing:true];
+//                [strongSelf->_attachmentSheetWindow dismissAnimated:true];
+//
+//                TGMapViewController *mapController = [[TGMapViewController alloc] initInPickingMode];
+//                mapController.watcher = strongSelf.actionHandle;
+//                TGNavigationController *navigationController = [TGNavigationController navigationControllerWithControllers:@[mapController]];
+//                
+//                if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad)
+//                {
+//                    navigationController.presentationStyle = TGNavigationControllerPresentationStyleInFormSheet;
+//                    navigationController.modalPresentationStyle = UIModalPresentationFormSheet;
+//                }
+//                
+//                [strongSelf presentViewController:navigationController animated:true completion:nil];
+//            }
+//        }]];
+//        [items addObject:[[TGAttachmentSheetButtonItemView alloc] initWithTitle:TGLocalized(@"Conversation.Document") pressed:^
+//        {
+//            __strong TGModernConversationController *strongSelf = weakSelf;
+//            if (strongSelf != nil)
+//            {
+//                [strongSelf.view endEditing:true];
+//                [strongSelf->_attachmentSheetWindow dismissAnimated:true];
+//                [strongSelf _displayDocumentPicker];
+//            }
+//        }]];
         
         if ([_companion allowContactSharing])
         {
@@ -3357,9 +3446,10 @@ static CGPoint locationForKeyboardWindowWithOffset(CGFloat offset, UIInterfaceOr
         NSMutableArray *actions = [[NSMutableArray alloc] initWithArray:@[
             [[TGActionSheetAction alloc] initWithTitle:TGLocalized(@"Common.ChoosePhoto") action:@"choosePhoto"],
             [[TGActionSheetAction alloc] initWithTitle:TGLocalized(@"Common.ChooseVideo") action:@"chooseVideo"],
-            [[TGActionSheetAction alloc] initWithTitle:TGLocalized(@"Conversation.SearchWebImages") action:@"searchWeb"],
+            [[TGActionSheetAction alloc] initWithTitle:TGLocalized(@"Conversation.MeetingProposal") action:@"meeting"],
+            //[[TGActionSheetAction alloc] initWithTitle:TGLocalized(@"Conversation.SearchWebImages") action:@"searchWeb"],
             [[TGActionSheetAction alloc] initWithTitle:TGLocalized(@"Conversation.Location") action:@"chooseLocation"],
-            [[TGActionSheetAction alloc] initWithTitle:TGLocalized(@"Conversation.Document") action:@"document"]
+            //[[TGActionSheetAction alloc] initWithTitle:TGLocalized(@"Conversation.Document") action:@"document"]
         ]];
         
         if ([_companion allowContactSharing])
@@ -3380,8 +3470,13 @@ static CGPoint locationForKeyboardWindowWithOffset(CGFloat offset, UIInterfaceOr
                     [controller _displayPhotoVideoPicker:false];
                 if ([action isEqualToString:@"choosePhoto"])
                     [controller _displayImagePicker:false];
-                else if ([action isEqualToString:@"searchWeb"])
-                    [controller _displayImagePicker:true];
+                else if ([action isEqualToString:@"meeting"])
+                {
+                    // TBD
+                    //[controller _displayImagePicker:true];
+                }
+                //else if ([action isEqualToString:@"searchWeb"])
+                //    [controller _displayImagePicker:true];
                 else if ([action isEqualToString:@"chooseVideo"])
                     [controller _displayPhotoVideoPicker:true];
                 else if ([action isEqualToString:@"chooseLocation"])
@@ -4483,6 +4578,24 @@ static UIView *_findBackArrow(UIView *view)
         
         if (options[@"latitude"] != nil)
             [_companion controllerWantsToSendMapWithLatitude:[options[@"latitude"] doubleValue] longitude:[options[@"longitude"] doubleValue]];
+    }
+    else if ([action isEqualToString:@"meetingCreationViewFinished"])
+    {
+        [self dismissViewControllerAnimated:true completion:nil];
+        if (options) {
+            NSString* desc = nil;
+            NSString* date = nil;
+            NSString* time = nil;
+            NSString* location = nil;
+        
+            desc = options[@"descriptionString"];
+            date = options[@"dateString"];
+            time = options[@"timeString"];
+            location = options[@"locationString"];
+        
+            [_companion controllerWantsToSendMeetingWithDescription:desc date:date time:time location:location];
+            [_companion loadControllerMeetingTitlePanel];
+        }
     }
     else if ([action isEqualToString:@"menuAction"])
     {

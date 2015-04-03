@@ -20,6 +20,8 @@
 #import "TGDocumentMediaAttachment.h"
 #import "TGAudioMediaAttachment.h"
 
+#import "WMMeetingMediaAttachment.h"
+
 #import "PSCoding.h"
 
 typedef enum {

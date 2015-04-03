@@ -154,16 +154,16 @@
 
 - (void)resetAllNotifications
 {
-    [[[TGActionSheet alloc] initWithTitle:TGLocalized(@"Notifications.ResetAllNotificationsHelp") actions:@[
-        [[TGActionSheetAction alloc] initWithTitle:TGLocalized(@"Notifications.Reset") action:@"reset" type:TGActionSheetActionTypeDestructive],
-        [[TGActionSheetAction alloc] initWithTitle:TGLocalized(@"Common.Cancel") action:@"cancel" type:TGActionSheetActionTypeCancel]
-    ] actionBlock:^(TGNotificationSettingsController *controller, NSString *action)
-    {
-        if ([action isEqualToString:@"reset"])
-        {
-            [controller _commitResetAllNotitications];
-        }
-    } target:self] showInView:self.view];
+//    [[[TGActionSheet alloc] initWithTitle:TGLocalized(@"Notifications.ResetAllNotificationsHelp") actions:@[
+//        [[TGActionSheetAction alloc] initWithTitle:TGLocalized(@"Notifications.Reset") action:@"reset" type:TGActionSheetActionTypeDestructive],
+//        [[TGActionSheetAction alloc] initWithTitle:TGLocalized(@"Common.Cancel") action:@"cancel" type:TGActionSheetActionTypeCancel]
+//    ] actionBlock:^(TGNotificationSettingsController *controller, NSString *action)
+//    {
+//        if ([action isEqualToString:@"reset"])
+//        {
+//            [controller _commitResetAllNotitications];
+//        }
+//    } target:self] showInView:self.view];
 }
 
 - (void)_commitResetAllNotitications

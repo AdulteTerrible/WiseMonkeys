@@ -389,7 +389,7 @@
 
 - (void)_selectItem:(TGCheckCollectionItem *)checkCollectionItem
 {
-    for (int sectionIndex = 0; sectionIndex < (int)self.menuSections.sections.count-1; sectionIndex++)
+    for (int sectionIndex = 0; sectionIndex < (int)self.menuSections.sections.count; sectionIndex++)
     {
         for (id item in ((TGCollectionMenuSection *)self.menuSections.sections[sectionIndex]).items)
         {

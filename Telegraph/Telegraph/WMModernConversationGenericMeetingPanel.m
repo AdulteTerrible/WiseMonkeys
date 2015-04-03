@@ -116,24 +116,23 @@
                                          self.frame.size.width - _moreButton.frame.size.width - 2*_margin,
                                          _moreButton.frame.size.height);
     
-    //float maxWidth = (self.frame.size.width-2*_margin)/3;
-    float maxWidth = (self.frame.size.width - 2*_margin)/3;
+    // width for each 3 parameters
+    float maxWidth = (self.frame.size.width - 4*_margin)/3;
     
     // starting with center: time, likely to be smaller
-    float timeWidth =0;
+    float timeW = _timeButton.frame.size.width;
+    float timeWidth = MIN(_timeButton.frame.size.width, maxWidth);
     if (_timeButton) {
-        _timeButton.frame = CGRectMake((self.frame.size.width - MIN(_timeButton.frame.size.width, maxWidth))/2,
+        _timeButton.frame = CGRectMake((self.frame.size.width - timeWidth)/2,
                                        40.0f,
-                                       MIN(_timeButton.frame.size.width, maxWidth),
+                                       timeWidth,
                                        _timeButton.frame.size.height);
-        timeWidth = _timeButton.frame.size.width;
     }
-    if (_timeLabel) {
-        _timeLabel.frame = CGRectMake((self.frame.size.width - MIN(maxWidth, _timeLabel.frame.size.width))/2,
+    else if (_timeLabel) {
+        _timeLabel.frame = CGRectMake((self.frame.size.width - timeWidth)/2,
                                       40.0f,
-                                      MIN(maxWidth, _timeLabel.frame.size.width),
+                                      timeWidth,
                                       _timeLabel.frame.size.height);
-        timeWidth = _timeLabel.frame.size.width;
     }
 
     // use the rest of total width for the 2 other fields
@@ -145,19 +144,20 @@
                                        MIN(_dateButton.frame.size.width, w),
                                        _dateButton.frame.size.height);
     }
-    if (_dateLabel){
+    else if (_dateLabel){
         _dateLabel.frame = CGRectMake(_margin,
                                       40.0f,
                                       MIN(_dateLabel.frame.size.width, w),
                                       _dateLabel.frame.size.height);
     }
+    
     if (_locationButton) {
         _locationButton.frame = CGRectMake(self.frame.size.width - MIN(w, _locationButton.frame.size.width) - _margin,
                                            40.0f,
                                            MIN(_locationButton.frame.size.width, w),
                                            _locationButton.frame.size.height);
     }
-    if (_locationLabel) {
+    else if (_locationLabel) {
         _locationLabel.frame = CGRectMake(self.frame.size.width - MIN(w, _locationLabel.frame.size.width) - _margin,
                                            40.0f,
                                            MIN(w, _locationLabel.frame.size.width),
@@ -181,7 +181,7 @@
     _meeting = meeting;
     
     _descriptionLabel.text = [[NSString alloc] initWithFormat:@"💭 %@", _meeting.meetingDescription];
-    [_locationLabel sizeToFit];
+    [_descriptionLabel sizeToFit];
     
     if (_meeting.dateIsToBeDiscussed) {
         _dateButton = [[TGModernButton alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 23.0f, 23.0f)];

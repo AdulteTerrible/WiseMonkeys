@@ -42,7 +42,15 @@
 {
     [super bindView:view];
     
-    view.textChanged = _textChanged;
+    __weak WMTextCollectionItem *weakSelf = self;
+    view.textChanged = ^(NSString *text)
+    {
+        __strong WMTextCollectionItem *strongSelf = weakSelf;
+        strongSelf.text = text;
+        
+        if (strongSelf.textChanged)
+            strongSelf.textChanged(text);
+    };
 }
 
 - (void)unbindView
@@ -75,11 +83,6 @@
     _alpha = value;
     
     [((WMTextCollectionItemView *)[self boundView]) setAlpha:_alpha];
-}
-
-- (NSString*) text
-{
-    return [((WMTextCollectionItemView *)[self boundView]) text];
 }
 
 @end

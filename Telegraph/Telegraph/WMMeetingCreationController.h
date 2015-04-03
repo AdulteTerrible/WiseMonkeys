@@ -26,22 +26,3 @@
 - (id)init;
 
 @end
-
-/*
-#import "TGCollectionMenuController.h"
-
-#import "ASWatcher.h"
-
-//@class TGUserInfoCollectionItem;
-
-@interface WMMeetingCreationController : TGCollectionMenuController <ASWatcher>
-
-@property (nonatomic, strong) ASHandle *actionHandle;
-
-//@property (nonatomic, strong) TGUserInfoCollectionItem *userInfoItem;
-@property (nonatomic, strong) TGCollectionMenuSection *eventDescriptionSection;
-@property (nonatomic, strong) TGCollectionMenuSection *eventDateTimeLocationSection;
-@property (nonatomic, strong) TGCollectionMenuSection *actionsSection;
-
-@end
- */

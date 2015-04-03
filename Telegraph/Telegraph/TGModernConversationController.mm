@@ -4583,15 +4583,17 @@ static UIView *_findBackArrow(UIView *view)
     {
         [self dismissViewControllerAnimated:true completion:nil];
         if (options) {
+            NSString* desc = nil;
             NSString* date = nil;
             NSString* time = nil;
             NSString* location = nil;
         
-            date = options[@"date"];
-            time = options[@"time"];
-            location = options[@"location"];
+            desc = options[@"descriptionString"];
+            date = options[@"dateString"];
+            time = options[@"timeString"];
+            location = options[@"locationString"];
         
-            [_companion controllerWantsToSendMeetingWithDescription:options[@"description"] date:date time:time location:location];
+            [_companion controllerWantsToSendMeetingWithDescription:desc date:date time:time location:location];
             [_companion loadControllerMeetingTitlePanel];
         }
     }

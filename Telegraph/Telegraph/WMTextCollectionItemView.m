@@ -31,13 +31,17 @@
         _alpha = 1.0f;
         
         _textField = [[TGTextField alloc] init];
+        _textField.delegate = self;
         _textField.font = TGSystemFontOfSize(18.0f);
         _textField.backgroundColor = [UIColor clearColor];
         _textField.textAlignment = NSTextAlignmentLeft;
         _textField.textColor = [UIColor blackColor];
+        _textField.autocorrectionType = UITextAutocorrectionTypeNo;
+        _textField.autocapitalizationType = UITextAutocapitalizationTypeNone;
+        _textField.spellCheckingType = UITextSpellCheckingTypeNo;
         _textField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
         _textField.keyboardType = UIKeyboardTypeDefault;
-        _textField.delegate = self;
+        
         
         [self addSubview:_textField];
         
@@ -46,23 +50,9 @@
     return self;
 }
 
-- (void)layoutSubviews
-{
-    [super layoutSubviews];
-    
-    if (_hasLabel) {
-        _label.frame = (CGRect){{14.0f, CGFloor((self.contentView.frame.size.height - _label.frame.size.height) / 2.0f)}, _label.frame.size};
-        
-        _textField.frame = CGRectMake(CGRectGetMaxX(_label.frame) + 2.0f, 0.0f, self.contentView.frame.size.width - 8.0f - 2.0f - CGRectGetMaxX(_label.frame), self.contentView.frame.size.height);
-    }
-    else {
-        _textField.frame = (CGRect){{15.0f, 0.0f}, {self.frame.size.width, self.frame.size.height}};
-    }
-}
-
 - (void)setAlpha:(CGFloat)value
 {
-    if ((_alpha == 0.0f)&&(value == 1.0f))    // Textfield appears
+    if (value == 1.0f)                         // Textfield appears
         [self makeTextFieldFirstResponder];   // so we give it the focus
     
     _alpha = value;
@@ -100,37 +90,34 @@
     //[self layoutSubviews];
 }
 
-- (NSString*) text
-{
-    return [_textField text];
-}
 
-- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
+- (void)layoutSubviews
 {
-    if (_textChanged)
-        _textChanged([textField text]);
+    [super layoutSubviews];
     
-    return true;
-}
-
-- (void)textFieldDidBeginEditing:(UITextField *)textField
-{
-    if (_textChanged)
-        _textChanged([textField text]);
-}
-
-- (void)textFieldDidEndEditing:(UITextField *)textField
-{
-    if (_textChanged)
-        _textChanged([textField text]);
+    if (_hasLabel) {
+        _label.frame = (CGRect){{14.0f, CGFloor((self.contentView.frame.size.height - _label.frame.size.height) / 2.0f)}, _label.frame.size};
+        
+        _textField.frame = CGRectMake(CGRectGetMaxX(_label.frame) + 2.0f, 0.0f, self.contentView.frame.size.width - 8.0f - 2.0f - CGRectGetMaxX(_label.frame), self.contentView.frame.size.height);
+    }
+    else {
+        _textField.frame = (CGRect){{15.0f, 0.0f}, {self.frame.size.width, self.frame.size.height}};
+    }
 }
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
-    if (_textChanged)
-        _textChanged([textField text]);
+    if (_textChanged) {
+        NSString *text = [textField.text stringByReplacingCharactersInRange:range withString:string];
+        _textChanged(text);
+    }
     
     return true;
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)__unused textField
+{
+    return false;
 }
 
 @end

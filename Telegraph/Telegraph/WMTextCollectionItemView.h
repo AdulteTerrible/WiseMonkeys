@@ -13,7 +13,6 @@
 @property (nonatomic, copy) void (^textChanged)(NSString *);
 
 @property (nonatomic) CGFloat   alpha;
-@property (nonatomic) NSString  *text;
 
 - (void) makeTextFieldFirstResponder;
 - (void) setPlaceholder:(NSString*)text;

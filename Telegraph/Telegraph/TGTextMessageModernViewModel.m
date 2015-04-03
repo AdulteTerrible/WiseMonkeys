@@ -125,8 +125,7 @@ static CTFontRef textFontForSize(CGFloat size)
                 if (_textModel.isLikeable) {
                     bool newState = [_textModel switchLikeState];
                     [_context.companionHandle requestAction:@"messageLikeToggleRequested" options:@{@"mid": @(_mid), @"text":_textModel.text, @"change":newState?@"+":@"-"}];
-                    TGLog(_textModel.text);
-                    // BROADCAST LIKE STATE
+                    //TGLog(_textModel.text);
                 }
                 else {
                     [_context.companionHandle requestAction:@"messageSelectionRequested" options:@{@"mid": @(_mid)}];

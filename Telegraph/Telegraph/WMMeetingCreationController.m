@@ -34,7 +34,7 @@
     // Description
     // *_meetingDescription;
     WMTextCollectionItem   *_descriptionItem;
-    NSString               *_descriptionString;
+    //NSString               *_descriptionString;
     
     // Date
     TGSwitchCollectionItem *_dateIsToBeDiscussed;
@@ -64,7 +64,6 @@
 
 - (id)init
 {
-    //self = [super initWithNibName:nil bundle:nil];
     self = [super init];
     if (self)
     {
@@ -85,8 +84,7 @@
             __strong WMMeetingCreationController *strongSelf = weakSelf;
             if (strongSelf != nil)
             {
-                strongSelf->_descriptionString = text;
-                strongSelf.navigationItem.rightBarButtonItem.enabled = (_descriptionString.length != 0);
+                strongSelf.navigationItem.rightBarButtonItem.enabled = (text.length != 0); // if there's user input, send button is enabled
             }
         };
         //[_descriptionItem becomeFirstResponder];
@@ -233,28 +231,27 @@
     if (watcherDelegate != nil && [watcherDelegate respondsToSelector:@selector(actionStageActionRequested:options:)])
     {
         NSMutableDictionary *options = [[NSMutableDictionary alloc] init];
+        
         // description
-        [options setObject:_descriptionString forKey:@"description"];
+        [options setObject:[_descriptionItem text] forKey:@"descriptionString"];
         
         // date
         if ([_dateIsToBeDiscussed isOn])
-            [options setObject:@"" forKey:@"date"];
+            [options setObject:@"" forKey:@"dateString"];
         else
-            [options setObject:[_dateItem text] forKey:@"date"];
+            [options setObject:[_dateItem text] forKey:@"dateString"];
 
         // time
         if ([_timeIsToBeDiscussed isOn])
-            [options setObject:@"" forKey:@"time"];
+            [options setObject:@"" forKey:@"timeString"];
         else
-            [options setObject:[_timeItem text] forKey:@"time"];
+            [options setObject:[_timeItem text] forKey:@"timeString"];
         
         // location
         if ([_locationIsToBeDiscussed isOn])
-            [options setObject:@"" forKey:@"location"];
+            [options setObject:@"" forKey:@"locationString"];
         else
-            [options setObject:[_locationItem text] forKey:@"location"];
-        
-         //TGLog(@"Meeting creation: sendButtonPressed with: %@", options);
+            [options setObject:[_locationItem text] forKey:@"locationString"];
         
         [watcherDelegate actionStageActionRequested:@"meetingCreationViewFinished" options:options];
     }

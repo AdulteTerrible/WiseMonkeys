@@ -28,31 +28,11 @@
 
 @interface WMMeetingScreenController () //<TGAlertSoundControllerDelegate>
 {
-    /*// Description
-    WMTextCollectionItem   *_descriptionItem;
-    NSString               *_descriptionString;
-    
-    // Date
-    TGSwitchCollectionItem *_dateIsToBeDiscussed;
-    WMTextCollectionItem   *_dateItem;
-    NSString               *_dateString;
-    
-    // Time
-    TGSwitchCollectionItem *_timeIsToBeDiscussed;
-    WMTextCollectionItem   *_timeItem;
-    NSString               *_timeString;
-    
-    // Location
-    TGSwitchCollectionItem *_locationIsToBeDiscussed;
-    WMTextCollectionItem   *_locationItem;
-    NSString               *_locationString;
-    */
-    
     WMMeeting *_meeting;
     
     TGCollectionMenuSection *_profileSection;
+    TGHeaderCollectionItem  *_profileHeader;
     TGCommentCollectionItem *_profileComment;
-    WMMeetingProfile        _profile;
 }
 
 @end
@@ -76,7 +56,11 @@
         [self _addSectionFromDictionary:_meeting.locationOptions AndTitle:@"LOCATION OPTIONS"];
         
         NSMutableArray *profileSectionItems = [[NSMutableArray alloc] init];
-        [profileSectionItems addObject:[[TGHeaderCollectionItem alloc] initWithTitle:@"PROFILE"]];
+        if (_meeting.profile == WMMeetingProfileNone)
+            _profileHeader = [[TGHeaderCollectionItem alloc] initWithHighlightedTitle:@"PLEASE CHOOSE YOUR PROFILE:"];
+        else
+            _profileHeader = [[TGHeaderCollectionItem alloc] initWithTitle:@"PROFILE"];
+        [profileSectionItems addObject:_profileHeader];
         
         //TGCheckCollectionItem *checkItem = [[TGCheckCollectionItem alloc] initWithTitle:@"Please choose your profile:" action:@selector(profilePressed:)];
         //[checkItem setIsChecked:false];
@@ -84,23 +68,23 @@
         //[profileSectionItems addObject:checkItem];
         
         TGCheckCollectionItem *checkItem0 = [[TGCheckCollectionItem alloc] initWithTitle:@"🙈 I want to discuss options." action:@selector(negotiatorProfilePressed:)];
-        [checkItem0 setIsChecked:true];
+        [checkItem0 setIsChecked:(_meeting.profile == WMMeetingProfileNegotiator)];
         [profileSectionItems addObject:checkItem0];
         
         TGCheckCollectionItem *checkItem2 = [[TGCheckCollectionItem alloc] initWithTitle:@"🙊 I'll decide later if I attend." action:@selector(independentProfilePressed:)];
-        [checkItem2 setIsChecked:false];
+        [checkItem2 setIsChecked:(_meeting.profile == WMMeetingProfileIndependent)];
         [profileSectionItems addObject:checkItem2];
         
         TGCheckCollectionItem *checkItem1 = [[TGCheckCollectionItem alloc] initWithTitle:@"🙉 I'll be there in any case." action:@selector(committedProfilePressed:)];
-        [checkItem1 setIsChecked:false];
+        [checkItem1 setIsChecked:(_meeting.profile == WMMeetingProfileCommitted)];
         [profileSectionItems addObject:checkItem1];
         
 
         TGCheckCollectionItem *checkItem3 = [[TGCheckCollectionItem alloc] initWithTitle:@"❌ I'm not available." action:@selector(notAvailableProfilePressed:)];
-        [checkItem3 setIsChecked:false];
+        [checkItem3 setIsChecked:(_meeting.profile == WMMeetingProfileNotAvailable)];
         [profileSectionItems addObject:checkItem3];
         
-        _profileComment = [[TGCommentCollectionItem alloc] initWithText:@"Your choice will not be communicated to the other members."];
+        _profileComment = [[TGCommentCollectionItem alloc] initWithText:@"You can change profile anytime. Your individual choice will not be communicated to the other members."];
         [profileSectionItems addObject:_profileComment];
         
         _profileSection = [[TGCollectionMenuSection alloc] initWithItems:profileSectionItems];
@@ -265,10 +249,13 @@
     NSIndexPath *indexPath = [self indexPathForItem:checkCollectionItem];
     if (indexPath != nil)
     {
-        _profile = WMMeetingProfileNegotiator;
+        if (_meeting.profile == WMMeetingProfileNone) {
+            [_profileHeader setTitle:@"PROFILE"];
+        }
+        _meeting.profile = WMMeetingProfileNegotiator;
         [self _selectProfileItem:checkCollectionItem];
         
-        _profileComment.text = @"You can negotiate the get-togther by sending options, receiving other member's options and liking them.";
+        _profileComment.text = @"You can negotiate the get-together by sending and receiving options for date/time/location, and liking them.";
     }
 }
 
@@ -277,10 +264,13 @@
     NSIndexPath *indexPath = [self indexPathForItem:checkCollectionItem];
     if (indexPath != nil)
     {
-        _profile = WMMeetingProfileIndependent;
+        if (_meeting.profile == WMMeetingProfileNone) {
+            [_profileHeader setTitle:@"PROFILE"];
+        }
+        _meeting.profile = WMMeetingProfileIndependent;
         [self _selectProfileItem:checkCollectionItem];
         
-        _profileComment.text = @"You will be only notified of the get-together once date, time and place are known. You can then decide independently to attend.";
+        _profileComment.text = @"You will be only notified of the get-together once date, time and location are known. You can then decide independently to attend.";
     }
 }
 
@@ -289,10 +279,13 @@
     NSIndexPath *indexPath = [self indexPathForItem:checkCollectionItem];
     if (indexPath != nil)
     {
-        _profile = WMMeetingProfileCommitted;
+        if (_meeting.profile == WMMeetingProfileNone) {
+            [_profileHeader setTitle:@"PROFILE"];
+        }
+        _meeting.profile = WMMeetingProfileCommitted;
         [self _selectProfileItem:checkCollectionItem];
         
-        _profileComment.text = @"You will be only notified of the get-together once date, time and place are known. Thank you for participating unconditionnaly!";
+        _profileComment.text = @"You will be only notified of the get-together once date, time and location are known. Thank you for participating unconditionnaly!";
     }
 }
 
@@ -301,7 +294,10 @@
     NSIndexPath *indexPath = [self indexPathForItem:checkCollectionItem];
     if (indexPath != nil)
     {
-        _profile = WMMeetingProfileNotAvailable;
+        if (_meeting.profile == WMMeetingProfileNone) {
+            [_profileHeader setTitle:@"PROFILE"];
+        }
+        _meeting.profile = WMMeetingProfileNotAvailable;
         [self _selectProfileItem:checkCollectionItem];
         
         _profileComment.text = @"You will not receive any notification for this get-together. You can change profile any time.";

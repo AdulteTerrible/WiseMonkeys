@@ -25,32 +25,36 @@
 
 @interface WMModernConversationGenericMeetingPanel ()
 {
-    CALayer *_stripeLayer;
-    UIEdgeInsets _insets;
+    CALayer         *_stripeLayer;
+    UIEdgeInsets     _insets;
     //NSArray *_buttons;
     //NSArray *_buttonActions;
     
-    UIFont* _smallFont;
-    UIFont* _bigFont;
-    UIFont* _bigBoldFont;
+    UIFont          *_smallFont;
+    UIFont          *_bigFont;
+    UIFont          *_bigBoldFont;
     
-    UIButton *_dateButton;
-    UILabel*  _dateLabel;
+    UIButton        *_dateButton;
+    UILabel         *_dateLabel;
     
-    UIButton *_timeButton;
-    UILabel*  _timeLabel;
+    UIButton        *_timeButton;
+    UILabel         *_timeLabel;
     
-    UIButton *_locationButton;
-    UILabel*  _locationLabel;
+    UIButton        *_locationButton;
+    UILabel         *_locationLabel;
     
-    UIButton *_moreButton;
+    UIButton        *_moreButton;
     
-    UILabel*  _descriptionLabel;
+    UILabel         *_descriptionLabel;
     
-    UIView *_backgroundView;
+    UIView          *_backgroundView;
     
-    float _margin;
+    float           _margin; // space between date/time/location views
 }
+
+@property (nonatomic, strong) UIView        *unreadBadgeContainer;
+@property (nonatomic, strong) UIImageView   *unreadBadgeBackground;
+@property (nonatomic, strong) UILabel       *unreadBadgeLabel;
 
 @end
 
@@ -99,9 +103,87 @@
         [_moreButton addSubview:arrowView];
         [_moreButton addTarget:self action:@selector(moreButtonPressed) forControlEvents:UIControlEventTouchUpInside];
         [self addSubview:_moreButton];
+        
+        [self setUnreadCount:1];
     }
     return self;
 }
+
+- (void)loadUnreadBadgeView
+{
+    if (_unreadBadgeContainer != nil)
+        return;
+    
+    _unreadBadgeContainer = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 20, 20)];
+    _unreadBadgeContainer.hidden = true;
+    _unreadBadgeContainer.userInteractionEnabled = false;
+    _unreadBadgeContainer.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
+    [self addSubview:_unreadBadgeContainer];
+    
+    UIGraphicsBeginImageContextWithOptions(CGSizeMake(18.0f, 18.0f), false, 0.0f);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextSetFillColorWithColor(context, UIColorRGB(0xff3b30).CGColor);
+    CGContextFillEllipseInRect(context, CGRectMake(0.0f, 0.0f, 18.0f, 18.0f));
+    UIImage *badgeImage = [UIGraphicsGetImageFromCurrentImageContext() stretchableImageWithLeftCapWidth:9.0f topCapHeight:0.0f];
+    UIGraphicsEndImageContext();
+    
+    _unreadBadgeBackground = [[UIImageView alloc] initWithImage:badgeImage];
+    [_unreadBadgeContainer addSubview:_unreadBadgeBackground];
+    
+    _unreadBadgeLabel = [[UILabel alloc] init];
+    _unreadBadgeLabel.text = @"1";
+    [_unreadBadgeLabel sizeToFit];
+    _unreadBadgeLabel.text = nil;
+    _unreadBadgeLabel.backgroundColor = [UIColor clearColor];
+    _unreadBadgeLabel.textColor = [UIColor whiteColor];
+    _unreadBadgeLabel.font = TGSystemFontOfSize(13);
+    [_unreadBadgeContainer addSubview:_unreadBadgeLabel];
+    
+    [self setNeedsLayout];
+}
+
+- (void)setUnreadCount:(int)unreadCount
+{
+    if (unreadCount <= 0 && _unreadBadgeLabel == nil)
+        return;
+    
+    [self loadUnreadBadgeView];
+    
+    if (unreadCount <= 0)
+        _unreadBadgeContainer.hidden = true;
+    else
+    {
+        NSString *text = nil;
+        
+        //if (TGIsLocaleArabic())
+        //    text = [TGStringUtils stringWithLocalizedNumber:unreadCount];
+        //else
+        //{
+            if (unreadCount < 1000)
+                text = [[NSString alloc] initWithFormat:@"%d", unreadCount];
+            else if (unreadCount < 1000000)
+                text = [[NSString alloc] initWithFormat:@"%dK", unreadCount / 1000];
+            else
+                text = [[NSString alloc] initWithFormat:@"%dM", unreadCount / 1000000];
+        //}
+        
+        _unreadBadgeLabel.text = text;
+        [_unreadBadgeLabel sizeToFit];
+        _unreadBadgeContainer.hidden = false;
+        
+        CGRect frame = _unreadBadgeBackground.frame;
+        CGFloat textWidth = _unreadBadgeLabel.frame.size.width;
+        frame.size.width = MAX(18.0f, textWidth + 10.0f + TGRetinaPixel * 2.0f);
+        frame.origin.x = _unreadBadgeBackground.superview.frame.size.width - frame.size.width;
+        _unreadBadgeBackground.frame = frame;
+        
+        CGRect labelFrame = _unreadBadgeLabel.frame;
+        labelFrame.origin.x = 5.0f + TGRetinaPixel + frame.origin.x;
+        labelFrame.origin.y = 1;
+        _unreadBadgeLabel.frame = labelFrame;
+    }
+}
+
 - (void)layoutSubviews
 {
     [super layoutSubviews];
@@ -118,6 +200,15 @@
                                    firstLineY,
                                    _moreButton.frame.size.width,
                                    _moreButton.frame.size.height);
+    
+    // Set badge with unread message count on "More >" button
+    if (_unreadBadgeContainer != nil)
+    {
+        CGRect unreadBadgeContainerFrame = _unreadBadgeContainer.frame;
+        unreadBadgeContainerFrame.origin.x = _moreButton.frame.origin.x + _moreButton.frame.size.width - 25;
+        unreadBadgeContainerFrame.origin.y = 2;
+        _unreadBadgeContainer.frame = unreadBadgeContainerFrame;
+    }
     
     _descriptionLabel.frame = CGRectMake(_margin,
                                          firstLineY,
@@ -199,10 +290,10 @@
     if (_meeting.dateIsToBeDiscussed) {
         _dateButton = [[TGModernButton alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 1.0f, 1.0f)];
         _dateButton.titleLabel.font = _smallFont;
-        if ([_meeting.dateOptions count]>0) {
-            [_dateButton setTitle:[[NSString alloc] initWithFormat:@"📅(%d) Suggest", [_meeting.dateOptions count]] forState:UIControlStateNormal];
-        }
-        else
+//        if ([_meeting.dateOptions count]>0) {
+//            [_dateButton setTitle:[[NSString alloc] initWithFormat:@"📅(%d) Suggest", [_meeting.dateOptions count]] forState:UIControlStateNormal];
+//        }
+//        else
             [_dateButton setTitle:@"📅 Suggest" forState:UIControlStateNormal];
         [_dateButton setTitleColor:self.tintColor forState:UIControlStateNormal];
         [_dateButton addTarget:self action:@selector(dateButtonPressed) forControlEvents:UIControlEventTouchUpInside];
@@ -222,10 +313,10 @@
     if (_meeting.timeIsToBeDiscussed) {
         _timeButton = [[TGModernButton alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 1.0f, 1.0f)];
         _timeButton.titleLabel.font = _smallFont;
-        if ([_meeting.timeOptions count]>0) {
-            [_timeButton setTitle:[[NSString alloc] initWithFormat:@"🕑(%d) Suggest", [_meeting.timeOptions count]] forState:UIControlStateNormal];
-        }
-        else
+//        if ([_meeting.timeOptions count]>0) {
+//            [_timeButton setTitle:[[NSString alloc] initWithFormat:@"🕑(%d) Suggest", [_meeting.timeOptions count]] forState:UIControlStateNormal];
+//        }
+//        else
             [_timeButton setTitle:@"🕑 Suggest" forState:UIControlStateNormal];
         [_timeButton setTitleColor:self.tintColor forState:UIControlStateNormal];
         [_timeButton addTarget:self action:@selector(timeButtonPressed) forControlEvents:UIControlEventTouchUpInside];
@@ -245,10 +336,10 @@
     if (_meeting.locationIsToBeDiscussed) {
         _locationButton = [[TGModernButton alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 1.0f, 1.0f)];
         _locationButton.titleLabel.font = _smallFont;
-        if ([_meeting.locationOptions count]>0) {
-            [_locationButton setTitle:[[NSString alloc] initWithFormat:@"📍(%d) Suggest", [_meeting.locationOptions count]] forState:UIControlStateNormal];
-        }
-        else
+//        if ([_meeting.locationOptions count]>0) {
+//            [_locationButton setTitle:[[NSString alloc] initWithFormat:@"📍(%d) Suggest", [_meeting.locationOptions count]] forState:UIControlStateNormal];
+//        }
+//        else
             [_locationButton setTitle:@"📍Suggest" forState:UIControlStateNormal];
         [_locationButton setTitleColor:self.tintColor forState:UIControlStateNormal];
         [_locationButton addTarget:self action:@selector(locationButtonPressed) forControlEvents:UIControlEventTouchUpInside];

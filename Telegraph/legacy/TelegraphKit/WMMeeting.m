@@ -36,6 +36,8 @@
         self.location = @"";
         self.locationIsToBeDiscussed = true;
         self.locationOptions = [[NSMutableDictionary alloc] init];
+        
+        self.profile = WMMeetingProfileNone;
     }
     return self;
 }

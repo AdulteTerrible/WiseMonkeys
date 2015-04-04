@@ -8,6 +8,14 @@
 
 #import <Foundation/Foundation.h>
 
+typedef enum {
+    WMMeetingProfileNone,
+    WMMeetingProfileNegotiator,
+    WMMeetingProfileIndependent,
+    WMMeetingProfileCommitted,
+    WMMeetingProfileNotAvailable
+} WMMeetingProfile;
+
 @interface WMMeeting : NSObject
 
 @property (nonatomic) BOOL                          isActive;
@@ -24,5 +32,7 @@
 @property (nonatomic) BOOL                          locationIsToBeDiscussed;
 @property (nonatomic, strong) NSString              *location;
 @property (nonatomic, strong) NSMutableDictionary   *locationOptions;
+
+@property (nonatomic) WMMeetingProfile              profile;
 
 @end

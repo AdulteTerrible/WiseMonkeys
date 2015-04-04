@@ -11,7 +11,9 @@
 @interface TGHeaderCollectionItem : TGCollectionItem
 
 - (instancetype)initWithTitle:(NSString *)title;
+- (instancetype)initWithHighlightedTitle:(NSString *)title;
 
 - (void)setTitle:(NSString *)title;
+- (void)setHighlightedTitle:(NSString *)title;
 
 @end

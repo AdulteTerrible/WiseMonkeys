@@ -13,6 +13,7 @@
 @interface TGHeaderCollectionItem ()
 {
     NSString *_title;
+    BOOL     _isHighlighted;
 }
 
 @end
@@ -29,6 +30,22 @@
         self.selectable = false;
         
         _title = title;
+        _isHighlighted = false;
+    }
+    return self;
+}
+
+- (instancetype)initWithHighlightedTitle:(NSString *)title
+{
+    self = [super init];
+    if (self != nil)
+    {
+        self.transparent = true;
+        self.highlightable = false;
+        self.selectable = false;
+        
+        _title = title;
+        _isHighlighted = true;
     }
     return self;
 }
@@ -47,7 +64,10 @@
 {
     [super bindView:view];
     
-    [view setTitle:_title];
+    if (_isHighlighted)
+        [view setHighlightedTitle:_title];
+    else
+        [view setTitle:_title];
 }
 
 - (void)setTitle:(NSString *)title
@@ -55,8 +75,20 @@
     if (!TGStringCompare(_title, title))
     {
         _title = title;
+        _isHighlighted = false;
         
         [((TGHeaderCollectionItemView *)[self boundView]) setTitle:_title];
+    }
+}
+
+- (void)setHighlightedTitle:(NSString *)title
+{
+    if (!TGStringCompare(_title, title))
+    {
+        _title = title;
+        _isHighlighted = true;
+        
+        [((TGHeaderCollectionItemView *)[self boundView]) setHighlightedTitle:_title];
     }
 }
 

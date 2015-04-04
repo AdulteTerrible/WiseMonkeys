@@ -38,6 +38,18 @@
 
 - (void)setTitle:(NSString *)title
 {
+    _label.textColor = UIColorRGB(0x6d6d72);
+    _label.font = TGSystemFontOfSize(14.0f);
+
+    _label.text = title;
+    [self setNeedsLayout];
+}
+
+- (void)setHighlightedTitle:(NSString *)title
+{
+    _label.textColor = UIColorRGB(0xff3b30);
+    _label.font = TGSystemFontOfSize(16.0f);
+    
     _label.text = title;
     [self setNeedsLayout];
 }

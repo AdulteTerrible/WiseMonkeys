@@ -12,6 +12,13 @@
 
 #import "WMMeeting.h"
 
+typedef enum {
+    WMMeetingProfileNegotiator,
+    WMMeetingProfileIndependent,
+    WMMeetingProfileCommitted,
+    WMMeetingProfileNotAvailable
+} WMMeetingProfile;
+
 @interface WMMeetingScreenController : TGCollectionMenuController <ASWatcher>
 
 @property (nonatomic, strong) ASHandle *actionHandle;

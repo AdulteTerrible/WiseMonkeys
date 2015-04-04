@@ -654,12 +654,6 @@
 		BE5243FC1AC2061200D119FF /* WMMeetingMediaAttachment.m in Sources */ = {isa = PBXBuildFile; fileRef = BE5243FB1AC2061200D119FF /* WMMeetingMediaAttachment.m */; };
 		BE5243FF1AC2D65200D119FF /* WMMeetingMediaAttachment+Telegraph.m in Sources */ = {isa = PBXBuildFile; fileRef = BE5243FE1AC2D65200D119FF /* WMMeetingMediaAttachment+Telegraph.m */; };
 		BE5244041AC49B3700D119FF /* WMModernConversationGenericMeetingPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = BE5244031AC49B3700D119FF /* WMModernConversationGenericMeetingPanel.m */; };
-		BE5244111AC6271500D119FF /* location_disabled.png in Resources */ = {isa = PBXBuildFile; fileRef = BE52440B1AC6271400D119FF /* location_disabled.png */; };
-		BE5244121AC6271500D119FF /* location.png in Resources */ = {isa = PBXBuildFile; fileRef = BE52440C1AC6271500D119FF /* location.png */; };
-		BE5244131AC6271500D119FF /* time_disabled.png in Resources */ = {isa = PBXBuildFile; fileRef = BE52440D1AC6271500D119FF /* time_disabled.png */; };
-		BE5244141AC6271500D119FF /* time.png in Resources */ = {isa = PBXBuildFile; fileRef = BE52440E1AC6271500D119FF /* time.png */; };
-		BE5244151AC6271500D119FF /* date_diabled.png in Resources */ = {isa = PBXBuildFile; fileRef = BE52440F1AC6271500D119FF /* date_diabled.png */; };
-		BE5244161AC6271500D119FF /* date.png in Resources */ = {isa = PBXBuildFile; fileRef = BE5244101AC6271500D119FF /* date.png */; };
 		BE5244371AC81BE700D119FF /* ModernBubbleOutgoingFullLiked@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE52442F1AC81BE700D119FF /* ModernBubbleOutgoingFullLiked@2x.png */; };
 		BE5244381AC81BE700D119FF /* ModernBubbleOutgoingPartialLiked@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE5244301AC81BE700D119FF /* ModernBubbleOutgoingPartialLiked@2x.png */; };
 		BE5244391AC81BE700D119FF /* ModernBubbleOutgoingPartialNotLiked@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE5244311AC81BE700D119FF /* ModernBubbleOutgoingPartialNotLiked@2x.png */; };
@@ -2760,12 +2754,6 @@
 		BE5243FE1AC2D65200D119FF /* WMMeetingMediaAttachment+Telegraph.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "WMMeetingMediaAttachment+Telegraph.m"; sourceTree = "<group>"; };
 		BE5244021AC49B3700D119FF /* WMModernConversationGenericMeetingPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMModernConversationGenericMeetingPanel.h; sourceTree = "<group>"; };
 		BE5244031AC49B3700D119FF /* WMModernConversationGenericMeetingPanel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WMModernConversationGenericMeetingPanel.m; sourceTree = "<group>"; };
-		BE52440B1AC6271400D119FF /* location_disabled.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = location_disabled.png; sourceTree = "<group>"; };
-		BE52440C1AC6271500D119FF /* location.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = location.png; sourceTree = "<group>"; };
-		BE52440D1AC6271500D119FF /* time_disabled.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = time_disabled.png; sourceTree = "<group>"; };
-		BE52440E1AC6271500D119FF /* time.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = time.png; sourceTree = "<group>"; };
-		BE52440F1AC6271500D119FF /* date_diabled.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = date_diabled.png; sourceTree = "<group>"; };
-		BE5244101AC6271500D119FF /* date.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = date.png; sourceTree = "<group>"; };
 		BE52442F1AC81BE700D119FF /* ModernBubbleOutgoingFullLiked@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "ModernBubbleOutgoingFullLiked@2x.png"; path = "Resources/ModernBubbleOutgoingFullLiked@2x.png"; sourceTree = "<group>"; };
 		BE5244301AC81BE700D119FF /* ModernBubbleOutgoingPartialLiked@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "ModernBubbleOutgoingPartialLiked@2x.png"; path = "Resources/ModernBubbleOutgoingPartialLiked@2x.png"; sourceTree = "<group>"; };
 		BE5244311AC81BE700D119FF /* ModernBubbleOutgoingPartialNotLiked@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "ModernBubbleOutgoingPartialNotLiked@2x.png"; path = "Resources/ModernBubbleOutgoingPartialNotLiked@2x.png"; sourceTree = "<group>"; };
@@ -7969,12 +7957,6 @@
 				BE5244341AC81BE700D119FF /* ModernBubbleIncomingFullNotLiked@2x.png */,
 				BE5244351AC81BE700D119FF /* ModernBubbleIncomingPartialLiked@2x.png */,
 				BE5244361AC81BE700D119FF /* ModernBubbleIncomingFullLiked@2x.png */,
-				BE52440B1AC6271400D119FF /* location_disabled.png */,
-				BE52440C1AC6271500D119FF /* location.png */,
-				BE52440D1AC6271500D119FF /* time_disabled.png */,
-				BE52440E1AC6271500D119FF /* time.png */,
-				BE52440F1AC6271500D119FF /* date_diabled.png */,
-				BE5244101AC6271500D119FF /* date.png */,
 				D0BAF3E0193E8AC400A0093F /* ActionsWhiteIcon.png */,
 				934280BA1847F31C004F1C2A /* ActionsWhiteIcon@2x.png */,
 				D084D4601A3926E500EA8120 /* AttachmentMenuInteractiveCameraIcon.png */,
@@ -10596,7 +10578,6 @@
 				D0880639156EB11800311537 /* Localizable.strings in Resources */,
 				D0C925CC194A024000E629CA /* start_arrow@2x.png in Resources */,
 				D0052CB3159513F2009482C4 /* SearchBarBackground@2x.png in Resources */,
-				BE5244151AC6271500D119FF /* date_diabled.png in Resources */,
 				D04ABC011A3B3C2A00869014 /* ListsDownDisclosureIndicator.png in Resources */,
 				D0BD441818B78DF90036FB8B /* ModernMessageAudioCancel_Outgoing@2x.png in Resources */,
 				93C52F6B18621C2E008229A7 /* ModernMessageDocumentGenericIcon@2x.png in Resources */,
@@ -10624,7 +10605,6 @@
 				934134BC18551FF500480294 /* builtin-wallpaper-2-thumbnail.jpg in Resources */,
 				D0A516C8193FD7E9000B8984 /* iPad-Landscape.png in Resources */,
 				930808B71859253D00E62B42 /* ModernContactListCreateSecretChatIcon@2x.png in Resources */,
-				BE5244111AC6271500D119FF /* location_disabled.png in Resources */,
 				93992D6D182922DD00F29746 /* ModernMessageCheckmark2@2x.png in Resources */,
 				93080913185BC39600E62B42 /* ModernUserInfoPhoneEditingSeparator@2x.png in Resources */,
 				93EB7ABA184F90FC00891DBF /* ModernConversationTitleIconLock@2x.png in Resources */,
@@ -10728,7 +10708,6 @@
 				936219DB186460F600C52870 /* 100.m4a in Resources */,
 				93064DFC1832A2970024C05A /* ModernTypingDot1@2x.png in Resources */,
 				93064E021833C5EA0024C05A /* NavigationBackButton@2x.png in Resources */,
-				BE5244121AC6271500D119FF /* location.png in Resources */,
 				D0D670D6197EA36C0031B041 /* InfoPlist.strings in Resources */,
 				9386E8AE185DEBF800930205 /* ModernAuthPhoneBackground@2x.png in Resources */,
 				93269DFB185E922500FBC69F /* ModernBubbleOutgoingFullHighlighted@2x.png in Resources */,
@@ -10781,7 +10760,6 @@
 				93ED9EF918634CD700E22F84 /* ModernConversationEmptyListLogo@2x.png in Resources */,
 				93AD03AE16A1CCEC005D4575 /* navbar_big_progress_3@2x.png in Resources */,
 				93AD03AF16A1CCEC005D4575 /* navbar_big_progress_4@2x.png in Resources */,
-				BE5244141AC6271500D119FF /* time.png in Resources */,
 				93AD03B016A1CCEC005D4575 /* navbar_big_progress_5@2x.png in Resources */,
 				93AD03B116A1CCEC005D4575 /* navbar_big_progress_6@2x.png in Resources */,
 				93AD03B216A1CCEC005D4575 /* navbar_big_progress_7@2x.png in Resources */,
@@ -10967,7 +10945,6 @@
 				D0BAF3EE193E8AC400A0093F /* DialogList_Muted.png in Resources */,
 				933AA4C8186101A5000AA848 /* SearchInputFieldLight@2x.png in Resources */,
 				D0C925C6194A024000E629CA /* powerful_star@2x.png in Resources */,
-				BE5244131AC6271500D119FF /* time_disabled.png in Resources */,
 				93F3A0F91821B6AC0005EB98 /* ModernBubbleOutgoingFull@2x.png in Resources */,
 				93941A271734665700F97189 /* ClockWhiteMin@2x.png in Resources */,
 				93941A281734665700F97189 /* ClockWhiteHour@2x.png in Resources */,
@@ -10995,7 +10972,6 @@
 				D03FECD019CC559D004866D6 /* SecretPhotoFire.png in Resources */,
 				D0CC4D6A19F7FEAC001E8D57 /* ModernMessageYoutubeButton@2x.png in Resources */,
 				930AD0AA173C2E31003DABCE /* MapCalloutArrow_Highlighted@2x.png in Resources */,
-				BE5244161AC6271500D119FF /* date.png in Resources */,
 				D01D7D6319DECE2800955BDE /* Localizable.strings in Resources */,
 				930AD0AB173C2E31003DABCE /* MapCalloutArrow@2x.png in Resources */,
 				933AA4A31860BE79000AA848 /* ModernNavigationAddButtonIcon@2x.png in Resources */,

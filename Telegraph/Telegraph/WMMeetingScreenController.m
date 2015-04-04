@@ -28,26 +28,7 @@
 
 @interface WMMeetingScreenController () //<TGAlertSoundControllerDelegate>
 {
-    /*TGSwitchCollectionItem *_privateAlert;
-    TGSwitchCollectionItem *_privatePreview;
-    TGVariantCollectionItem *_privateSound;
-    
-    TGSwitchCollectionItem *_groupAlert;
-    TGSwitchCollectionItem *_groupPreview;
-    TGVariantCollectionItem *_groupSound;
-    
-    TGSwitchCollectionItem *_inAppSounds;
-    TGSwitchCollectionItem *_inAppVibrate;
-    TGSwitchCollectionItem *_inAppPreview;
-    
-    NSMutableDictionary *_privateNotificationSettings;
-    NSMutableDictionary *_groupNotificationSettings;
-    
-    bool _selectingPrivateSound;
-    */
-    
-    // Description
-    // *_meetingDescription;
+    /*// Description
     WMTextCollectionItem   *_descriptionItem;
     NSString               *_descriptionString;
     
@@ -65,7 +46,13 @@
     TGSwitchCollectionItem *_locationIsToBeDiscussed;
     WMTextCollectionItem   *_locationItem;
     NSString               *_locationString;
+    */
+    
     WMMeeting *_meeting;
+    
+    TGCollectionMenuSection *_profileSection;
+    TGCommentCollectionItem *_profileComment;
+    WMMeetingProfile        _profile;
 }
 
 @end
@@ -81,151 +68,47 @@
         
         _actionHandle = [[ASHandle alloc] initWithDelegate:self releaseOnMainThread:true];
         
-        [self setTitleText:@"Get-together"];
-        
         //// Description
-        //[_descriptionItem becomeFirstResponder];
-        NSMutableArray *optionsSectionItems = [[NSMutableArray alloc] init];
-        [optionsSectionItems addObject:[[TGHeaderCollectionItem alloc] initWithTitle:_meeting.meetingDescription]];
-        if (_meeting.dateOptions.count>0) {
-            for(id key in _meeting.dateOptions) {
-                id value = [_meeting.dateOptions objectForKey:key];
-                TGCheckCollectionItem *cItem = [[TGCheckCollectionItem alloc] initWithTitle:[[NSString alloc]initWithFormat:@"%@♥︎ %@", (NSString*)value, (NSString*)key] action:@selector(profilePressed:)];
-                [cItem setIsChecked:false];
-                [optionsSectionItems addObject:cItem];
-            }
-        }
-        if (_meeting.timeOptions.count>0) {
-            for(id key in _meeting.timeOptions) {
-                id value = [_meeting.timeOptions objectForKey:key];
-                TGCheckCollectionItem *cItem = [[TGCheckCollectionItem alloc] initWithTitle:[[NSString alloc]initWithFormat:@"%@♥︎ %@", (NSString*)value, (NSString*)key] action:@selector(profilePressed:)];
-                [cItem setIsChecked:false];
-                [optionsSectionItems addObject:cItem];
-            }
-        }
-        if (_meeting.locationOptions.count>0) {
-            for(id key in _meeting.locationOptions) {
-                id value = [_meeting.locationOptions objectForKey:key];
-                TGCheckCollectionItem *cItem = [[TGCheckCollectionItem alloc] initWithTitle:[[NSString alloc]initWithFormat:@"%@♥︎ %@", (NSString*)value, (NSString*)key] action:@selector(profilePressed:)];
-                [cItem setIsChecked:false];
-                [optionsSectionItems addObject:cItem];
-            }
-        }
-        TGCollectionMenuSection *optionsSection = [[TGCollectionMenuSection alloc] initWithItems:optionsSectionItems];
-        UIEdgeInsets topSectionInsets = optionsSection.insets;
-        topSectionInsets.top = 16.0f;
-        optionsSection.insets = topSectionInsets;
-        [self.menuSections addSection:optionsSection];
+        [self setTitleText:_meeting.meetingDescription];
+        
+        [self _addSectionFromDictionary:_meeting.dateOptions AndTitle:@"DATE OPTIONS"];
+        [self _addSectionFromDictionary:_meeting.timeOptions AndTitle:@"TIME OPTIONS"];
+        [self _addSectionFromDictionary:_meeting.locationOptions AndTitle:@"LOCATION OPTIONS"];
         
         NSMutableArray *profileSectionItems = [[NSMutableArray alloc] init];
         [profileSectionItems addObject:[[TGHeaderCollectionItem alloc] initWithTitle:@"PROFILE"]];
         
-        TGCheckCollectionItem *checkItem = [[TGCheckCollectionItem alloc] initWithTitle:@"Please choose your profile:" action:@selector(profilePressed:)];
-        [checkItem setIsChecked:false];
-        checkItem.requiresFullSeparator = true;
-        [profileSectionItems addObject:checkItem];
+        //TGCheckCollectionItem *checkItem = [[TGCheckCollectionItem alloc] initWithTitle:@"Please choose your profile:" action:@selector(profilePressed:)];
+        //[checkItem setIsChecked:false];
+        //checkItem.requiresFullSeparator = true;
+        //[profileSectionItems addObject:checkItem];
         
-        TGCheckCollectionItem *checkItem0 = [[TGCheckCollectionItem alloc] initWithTitle:@"I want to discuss options" action:@selector(profilePressed:)];
+        TGCheckCollectionItem *checkItem0 = [[TGCheckCollectionItem alloc] initWithTitle:@"🙈 I want to discuss options." action:@selector(negotiatorProfilePressed:)];
         [checkItem0 setIsChecked:true];
         [profileSectionItems addObject:checkItem0];
         
-        TGCheckCollectionItem *checkItem2 = [[TGCheckCollectionItem alloc] initWithTitle:@"I don't want to decide now" action:@selector(profilePressed:)];
+        TGCheckCollectionItem *checkItem2 = [[TGCheckCollectionItem alloc] initWithTitle:@"🙊 I'll decide later if I attend." action:@selector(independentProfilePressed:)];
         [checkItem2 setIsChecked:false];
         [profileSectionItems addObject:checkItem2];
         
-        TGCheckCollectionItem *checkItem1 = [[TGCheckCollectionItem alloc] initWithTitle:@"I'll be there" action:@selector(profilePressed:)];
+        TGCheckCollectionItem *checkItem1 = [[TGCheckCollectionItem alloc] initWithTitle:@"🙉 I'll be there in any case." action:@selector(committedProfilePressed:)];
         [checkItem1 setIsChecked:false];
         [profileSectionItems addObject:checkItem1];
         
 
-        TGCheckCollectionItem *checkItem3 = [[TGCheckCollectionItem alloc] initWithTitle:@"I'm not available" action:@selector(profilePressed:)];
+        TGCheckCollectionItem *checkItem3 = [[TGCheckCollectionItem alloc] initWithTitle:@"❌ I'm not available." action:@selector(notAvailableProfilePressed:)];
         [checkItem3 setIsChecked:false];
         [profileSectionItems addObject:checkItem3];
         
-        [profileSectionItems addObject:[[TGCommentCollectionItem alloc] initWithText:@"Your choice will not be communicated to the other members."]];
+        _profileComment = [[TGCommentCollectionItem alloc] initWithText:@"Your choice will not be communicated to the other members."];
+        [profileSectionItems addObject:_profileComment];
         
-        TGCollectionMenuSection *profileSection = [[TGCollectionMenuSection alloc] initWithItems:profileSectionItems];
-        profileSection.insets = topSectionInsets;
-        [self.menuSections addSection:profileSection];
+        _profileSection = [[TGCollectionMenuSection alloc] initWithItems:profileSectionItems];
+        UIEdgeInsets topSectionInsets = _profileSection.insets;
+        topSectionInsets.top = 16.0f;
+        _profileSection.insets = topSectionInsets;
+        [self.menuSections addSection:_profileSection];
         
-        /*
-        _privateNotificationSettings = [[NSMutableDictionary alloc] initWithDictionary:@{@"muteUntil": @(0), @"soundId": @(1), @"previewText": @(true)}];
-        _groupNotificationSettings = [[NSMutableDictionary alloc] initWithDictionary:@{@"muteUntil": @(0), @"soundId": @(1), @"previewText": @(true)}];
-        
-        
-        
-        _privateAlert = [[TGSwitchCollectionItem alloc] initWithTitle:TGLocalized(@"Notifications.MessageNotificationsAlert") isOn:true];
-        _privateAlert.interfaceHandle = _actionHandle;
-        _privatePreview = [[TGSwitchCollectionItem alloc] initWithTitle:TGLocalized(@"Notifications.MessageNotificationsPreview") isOn:true];
-        _privatePreview.interfaceHandle = _actionHandle;
-        
-        NSString *currentPrivateSound = [TGAppDelegateInstance modernAlertSoundTitles][1];
-        NSString *currentGroupSound = [TGAppDelegateInstance modernAlertSoundTitles][1];
-        
-        _privateSound = [[TGVariantCollectionItem alloc] initWithTitle:TGLocalized(@"Notifications.MessageNotificationsSound") variant:currentPrivateSound action:@selector(privateSoundPressed)];
-        _privateSound.deselectAutomatically = [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad;
-        
-        TGCollectionMenuSection *messageNotificationsSection = [[TGCollectionMenuSection alloc] initWithItems:@[
-            [[TGHeaderCollectionItem alloc] initWithTitle:TGLocalized(@"Notifications.MessageNotifications")],
-            _privateAlert,
-            _privatePreview,
-            _privateSound,
-            [[TGCommentCollectionItem alloc] initWithText:TGLocalized(@"Notifications.MessageNotificationsHelp")]
-        ]];
-        UIEdgeInsets topSectionInsets = messageNotificationsSection.insets;
-        topSectionInsets.top = 32.0f;
-        messageNotificationsSection.insets = topSectionInsets;
-        [self.menuSections addSection:messageNotificationsSection];
-        
-        _groupSound = [[TGVariantCollectionItem alloc] initWithTitle:TGLocalized(@"Notifications.MessageNotificationsSound") variant:currentGroupSound action:@selector(groupSoundPressed)];
-        _groupSound.deselectAutomatically = [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad;
-        
-        _groupAlert = [[TGSwitchCollectionItem alloc] initWithTitle:TGLocalized(@"Notifications.GroupNotificationsAlert") isOn:true];
-        _groupAlert.interfaceHandle = _actionHandle;
-        _groupPreview = [[TGSwitchCollectionItem alloc] initWithTitle:TGLocalized(@"Notifications.GroupNotificationsPreview") isOn:true];
-        _groupPreview.interfaceHandle = _actionHandle;
-        
-        TGCollectionMenuSection *groupNotificationsSection = [[TGCollectionMenuSection alloc] initWithItems:@[
-            [[TGHeaderCollectionItem alloc] initWithTitle:TGLocalized(@"Notifications.GroupNotifications")],
-            _groupAlert,
-            _groupPreview,
-            _groupSound,
-            [[TGCommentCollectionItem alloc] initWithText:TGLocalized(@"Notifications.GroupNotificationsHelp")]
-        ]];
-        [self.menuSections addSection:groupNotificationsSection];
-        
-        _inAppSounds = [[TGSwitchCollectionItem alloc] initWithTitle:TGLocalized(@"Notifications.InAppNotificationsSounds") isOn:TGAppDelegateInstance.soundEnabled];
-        _inAppSounds.interfaceHandle = _actionHandle;
-        _inAppVibrate = [[TGSwitchCollectionItem alloc] initWithTitle:TGLocalized(@"Notifications.InAppNotificationsVibrate") isOn:TGAppDelegateInstance.vibrationEnabled];
-        _inAppVibrate.interfaceHandle = _actionHandle;
-        _inAppPreview = [[TGSwitchCollectionItem alloc] initWithTitle:TGLocalized(@"Notifications.InAppNotificationsPreview") isOn:TGAppDelegateInstance.bannerEnabled];
-        _inAppPreview.interfaceHandle = _actionHandle;
-        
-        NSMutableArray *inAppNotificationsSectionItems = [[NSMutableArray alloc] init];
-        
-        [inAppNotificationsSectionItems addObject:[[TGHeaderCollectionItem alloc] initWithTitle:TGLocalized(@"Notifications.InAppNotifications")]];
-        [inAppNotificationsSectionItems addObject:_inAppSounds];
-        
-        if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone)
-        {
-            [inAppNotificationsSectionItems addObject:_inAppVibrate];
-            [inAppNotificationsSectionItems addObject:_inAppPreview];
-        }
-        
-        TGCollectionMenuSection *inAppNotificationsSection = [[TGCollectionMenuSection alloc] initWithItems:inAppNotificationsSectionItems];
-        [self.menuSections addSection:inAppNotificationsSection];
-        
-        [ActionStageInstance() dispatchOnStageQueue:^
-        {
-            [ActionStageInstance() watchForPaths:@[
-                [NSString stringWithFormat:@"/tg/peerSettings/(%d)", INT_MAX - 1],
-                [NSString stringWithFormat:@"/tg/peerSettings/(%d)", INT_MAX - 2]
-            ] watcher:self];
-            
-            [ActionStageInstance() requestActor:[NSString stringWithFormat:@"/tg/peerSettings/(%d,cached)", INT_MAX - 1] options:[NSDictionary dictionaryWithObject:[NSNumber numberWithLongLong:INT_MAX - 1] forKey:@"peerId"] watcher:self];
-            [ActionStageInstance() requestActor:[NSString stringWithFormat:@"/tg/peerSettings/(%d,cached)", INT_MAX - 2] options:[NSDictionary dictionaryWithObject:[NSNumber numberWithLongLong:INT_MAX - 2] forKey:@"peerId"] watcher:self];
-        }];
-         */
         
         TGButtonCollectionItem *resetItem = [[TGButtonCollectionItem alloc] initWithTitle:@"Close discussion" action:@selector(resetAllNotifications)];
         //resetItem.titleColor = TGDestructiveAccentColor();
@@ -377,21 +260,57 @@
     }
 }
 
-- (void)profilePressed:(TGCheckCollectionItem *)checkCollectionItem
+- (void)negotiatorProfilePressed:(TGCheckCollectionItem *)checkCollectionItem
 {
     NSIndexPath *indexPath = [self indexPathForItem:checkCollectionItem];
     if (indexPath != nil)
     {
-        [self _selectItem:checkCollectionItem];
-        //[self _playSoundWithId:[self soundIdFromItemIndexPath:indexPath]];
+        _profile = WMMeetingProfileNegotiator;
+        [self _selectProfileItem:checkCollectionItem];
+        
+        _profileComment.text = @"You can negotiate the get-togther by sending options, receiving other member's options and liking them.";
     }
 }
 
-- (void)_selectItem:(TGCheckCollectionItem *)checkCollectionItem
+- (void)independentProfilePressed:(TGCheckCollectionItem *)checkCollectionItem
 {
-    for (int sectionIndex = 0; sectionIndex < (int)self.menuSections.sections.count; sectionIndex++)
+    NSIndexPath *indexPath = [self indexPathForItem:checkCollectionItem];
+    if (indexPath != nil)
     {
-        for (id item in ((TGCollectionMenuSection *)self.menuSections.sections[sectionIndex]).items)
+        _profile = WMMeetingProfileIndependent;
+        [self _selectProfileItem:checkCollectionItem];
+        
+        _profileComment.text = @"You will be only notified of the get-together once date, time and place are known. You can then decide independently to attend.";
+    }
+}
+
+- (void)committedProfilePressed:(TGCheckCollectionItem *)checkCollectionItem
+{
+    NSIndexPath *indexPath = [self indexPathForItem:checkCollectionItem];
+    if (indexPath != nil)
+    {
+        _profile = WMMeetingProfileCommitted;
+        [self _selectProfileItem:checkCollectionItem];
+        
+        _profileComment.text = @"You will be only notified of the get-together once date, time and place are known. Thank you for participating unconditionnaly!";
+    }
+}
+
+- (void)notAvailableProfilePressed:(TGCheckCollectionItem *)checkCollectionItem
+{
+    NSIndexPath *indexPath = [self indexPathForItem:checkCollectionItem];
+    if (indexPath != nil)
+    {
+        _profile = WMMeetingProfileNotAvailable;
+        [self _selectProfileItem:checkCollectionItem];
+        
+        _profileComment.text = @"You will not receive any notification for this get-together. You can change profile any time.";
+    }
+}
+
+- (void)_selectProfileItem:(TGCheckCollectionItem *)checkCollectionItem
+{
+        for (id item in _profileSection.items)
         {
             if ([item isKindOfClass:[TGCheckCollectionItem class]])
             {
@@ -401,6 +320,31 @@
                     [(TGCheckCollectionItem *)item setIsChecked:false];
             }
         }
+}
+
+-(void)_addSectionFromDictionary:(NSMutableDictionary*)dictionary AndTitle:(NSString*)title
+{
+    if (dictionary.count>0) {
+        // sort options by likes
+        NSArray *orderedKeys = [dictionary keysSortedByValueUsingComparator:^NSComparisonResult(id obj1, id obj2){
+            return ![obj1 compare:obj2];
+        }];
+        
+        NSMutableArray *optionsSectionItems = [[NSMutableArray alloc] init];
+        [optionsSectionItems addObject:[[TGHeaderCollectionItem alloc] initWithTitle:title]];
+        for(id key in orderedKeys) {
+            TGCheckCollectionItem *cItem = [[TGCheckCollectionItem alloc] initWithTitle:[[NSString alloc]initWithFormat:@"%@♥︎ %@", (NSString*)[dictionary objectForKey:key], (NSString*)key] action:@selector(profilePressed:)];
+            [cItem setIsChecked:false];
+            [optionsSectionItems addObject:cItem];
+        }
+        
+        TGCollectionMenuSection *optionsSection = [[TGCollectionMenuSection alloc] initWithItems:optionsSectionItems];
+        
+        UIEdgeInsets topSectionInsets = optionsSection.insets;
+        topSectionInsets.top = 16.0f;
+        optionsSection.insets = topSectionInsets;
+        
+        [self.menuSections addSection:optionsSection];
     }
 }
 

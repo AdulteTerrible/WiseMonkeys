@@ -2588,15 +2588,15 @@ static CGPoint locationForKeyboardWindowWithOffset(CGFloat offset, UIInterfaceOr
 
 - (void)switchLikeToggleForMessage:(int32_t)messageId
 {
-    TGMessageModernConversationItem *highlightedItem = nil;
+    TGMessageModernConversationItem *likedItem = nil;
     
     for (TGModernCollectionCell *cell in _collectionView.visibleCells)
     {
         TGMessageModernConversationItem *messageItem = cell.boundItem;
         if (messageItem != nil && messageItem->_message.mid == messageId)
         {
-            highlightedItem = messageItem;
-            [highlightedItem switchLikeToggleWithViewStorage:_viewStorage];
+            likedItem = messageItem;
+            [likedItem switchLikeToggleWithViewStorage:_viewStorage];
             
             break;
         }

@@ -193,9 +193,9 @@ static UIColor *coloredNameForUid(int uid, __unused int currentUserId)
     [_viewModel setTemporaryHighlighted:temporaryHighlighted viewStorage:viewStorage];
 }
 
-- (void)switchLikeToggleWithViewStorage:(TGModernViewStorage *)viewStorage
+- (void)switchLikeTo:(bool)like // WithViewStorage:(TGModernViewStorage *)viewStorage
 {
-    [_viewModel switchLikeToggleWithViewStorage:viewStorage];
+    [_viewModel switchLikeTo:like]; //WithViewStorage:viewStorage];
 }
 
 - (CGRect)effectiveContentFrame

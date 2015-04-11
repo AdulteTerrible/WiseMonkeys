@@ -228,7 +228,7 @@ void TGUpdateMessageViewModelLayoutConstants()
 {
 }
 
-- (void)switchLikeToggleWithViewStorage:(TGModernViewStorage *)viewStorage
+- (void)switchLikeTo:(bool)like //WithViewStorage:(TGModernViewStorage *)viewStorage
 {
 }
 

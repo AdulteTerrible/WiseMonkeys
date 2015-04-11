@@ -27,8 +27,6 @@
 {
     CALayer         *_stripeLayer;
     UIEdgeInsets     _insets;
-    //NSArray *_buttons;
-    //NSArray *_buttonActions;
     
     UIFont          *_smallFont;
     UIFont          *_bigFont;
@@ -103,8 +101,6 @@
         [_moreButton addSubview:arrowView];
         [_moreButton addTarget:self action:@selector(moreButtonPressed) forControlEvents:UIControlEventTouchUpInside];
         [self addSubview:_moreButton];
-        
-        [self setUnreadCount:1];
     }
     return self;
 }
@@ -188,13 +184,19 @@
 {
     [super layoutSubviews];
     
-    _backgroundView.frame = self.bounds;
-    
-    _stripeLayer.frame = CGRectMake(0.0f, self.frame.size.height - TGRetinaPixel, self.frame.size.width, TGRetinaPixel);
-
     // Heights for 1st and 2nd lines of controls
     float firstLineY    = 0.0f;
     float secondLineY   = 40.0f;
+    
+    _backgroundView.frame = self.bounds;
+    
+    if (_meeting.profile == WMMeetingProfileNegotiator) { // panel will be at full size
+        _stripeLayer.frame = CGRectMake(0.0f, self.frame.size.height - TGRetinaPixel, self.frame.size.width, TGRetinaPixel);
+    }
+    else { // set panel to reduced size
+        _backgroundView.frame = CGRectMake(_backgroundView.frame.origin.x, _backgroundView.frame.origin.y, _backgroundView.frame.size.width, secondLineY);
+        _stripeLayer.frame = CGRectMake(0.0f, secondLineY - TGRetinaPixel, self.frame.size.width, TGRetinaPixel);
+    }
     
     _moreButton.frame = CGRectMake(self.frame.size.width - _moreButton.frame.size.width - _margin,
                                    firstLineY,
@@ -215,57 +217,59 @@
                                          self.frame.size.width - _moreButton.frame.size.width - 2*_margin,
                                          _moreButton.frame.size.height);
     
-    // width for each 3 parameters
-    float maxWidth = (self.frame.size.width - 4*_margin)/3;
-    float minWidth = 0; // to bound each control to max allowable width
-    
-    // starting with center: "time" parameter, likely to be smaller
-    if (_timeButton) {
-        minWidth = MIN(_timeButton.frame.size.width, maxWidth);
-        _timeButton.frame = CGRectMake((self.frame.size.width - minWidth)/2,
-                                       secondLineY - 6.0f,
-                                       minWidth,
-                                       _timeButton.frame.size.height);
-    }
-    else if (_timeLabel) {
-        minWidth = MIN(_timeLabel.frame.size.width, maxWidth);
-        _timeLabel.frame = CGRectMake((self.frame.size.width - minWidth)/2,
-                                      secondLineY,
-                                      minWidth,
-                                      _timeLabel.frame.size.height);
-    }
-
-    // use the rest of total width for the 2 other fields
-    float remainingWidth = (self.frame.size.width - minWidth - 2*_margin)/2;
-    
-    if (_dateButton) {
-        minWidth = MIN(_dateButton.frame.size.width, remainingWidth);
-        _dateButton.frame = CGRectMake(_margin,
-                                       secondLineY - 6.0f,
-                                       minWidth,
-                                       _dateButton.frame.size.height);
-    }
-    else if (_dateLabel){
-        minWidth = MIN(_dateLabel.frame.size.width, remainingWidth);
-        _dateLabel.frame = CGRectMake(_margin,
-                                      secondLineY,
-                                       minWidth,
-                                      _dateLabel.frame.size.height);
-    }
-    
-    if (_locationButton) {
-        minWidth = MIN(_locationButton.frame.size.width, remainingWidth);
-        _locationButton.frame = CGRectMake(self.frame.size.width - minWidth - _margin,
+    if (_meeting.profile == WMMeetingProfileNegotiator) { // display labels and buttons for options
+        // width for each 3 parameters
+        float maxWidth = (self.frame.size.width - 4*_margin)/3;
+        float minWidth = 0; // to bound each control to max allowable width
+        
+        // starting with center: "time" parameter, likely to be smaller
+        if (_timeButton) {
+            minWidth = MIN(_timeButton.frame.size.width, maxWidth);
+            _timeButton.frame = CGRectMake((self.frame.size.width - minWidth)/2,
                                            secondLineY - 6.0f,
                                            minWidth,
-                                           _locationButton.frame.size.height);
-    }
-    else if (_locationLabel) {
-        minWidth = MIN(_locationLabel.frame.size.width, remainingWidth);
-        _locationLabel.frame = CGRectMake(self.frame.size.width - minWidth - _margin,
-                                           secondLineY,
+                                           _timeButton.frame.size.height);
+        }
+        else if (_timeLabel) {
+            minWidth = MIN(_timeLabel.frame.size.width, maxWidth);
+            _timeLabel.frame = CGRectMake((self.frame.size.width - minWidth)/2,
+                                          secondLineY,
+                                          minWidth,
+                                          _timeLabel.frame.size.height);
+        }
+        
+        // use the rest of total width for the 2 other fields
+        float remainingWidth = (self.frame.size.width - minWidth - 2*_margin)/2;
+        
+        if (_dateButton) {
+            minWidth = MIN(_dateButton.frame.size.width, remainingWidth);
+            _dateButton.frame = CGRectMake(_margin,
+                                           secondLineY - 6.0f,
                                            minWidth,
-                                           _locationLabel.frame.size.height);
+                                           _dateButton.frame.size.height);
+        }
+        else if (_dateLabel){
+            minWidth = MIN(_dateLabel.frame.size.width, remainingWidth);
+            _dateLabel.frame = CGRectMake(_margin,
+                                          secondLineY,
+                                          minWidth,
+                                          _dateLabel.frame.size.height);
+        }
+        
+        if (_locationButton) {
+            minWidth = MIN(_locationButton.frame.size.width, remainingWidth);
+            _locationButton.frame = CGRectMake(self.frame.size.width - minWidth - _margin,
+                                               secondLineY - 6.0f,
+                                               minWidth,
+                                               _locationButton.frame.size.height);
+        }
+        else if (_locationLabel) {
+            minWidth = MIN(_locationLabel.frame.size.width, remainingWidth);
+            _locationLabel.frame = CGRectMake(self.frame.size.width - minWidth - _margin,
+                                              secondLineY,
+                                              minWidth,
+                                              _locationLabel.frame.size.height);
+        }
     }
 }
 
@@ -287,74 +291,71 @@
     _descriptionLabel.text = [[NSString alloc] initWithFormat:@"💭 %@", _meeting.meetingDescription];
     [_descriptionLabel sizeToFit];
     
-    if (_meeting.dateIsToBeDiscussed) {
-        _dateButton = [[TGModernButton alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 1.0f, 1.0f)];
-        _dateButton.titleLabel.font = _smallFont;
-//        if ([_meeting.dateOptions count]>0) {
-//            [_dateButton setTitle:[[NSString alloc] initWithFormat:@"📅(%d) Suggest", [_meeting.dateOptions count]] forState:UIControlStateNormal];
-//        }
-//        else
+    if ((_meeting.profile == WMMeetingProfileNegotiator)||(_meeting.profile == WMMeetingProfileNone)) { // display labels and buttons for options
+        if (_meeting.dateIsToBeDiscussed) {
+            _dateButton = [[TGModernButton alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 1.0f, 1.0f)];
+            _dateButton.titleLabel.font = _smallFont;
+            
             [_dateButton setTitle:@"📅 Suggest" forState:UIControlStateNormal];
-        [_dateButton setTitleColor:self.tintColor forState:UIControlStateNormal];
-        [_dateButton addTarget:self action:@selector(dateButtonPressed) forControlEvents:UIControlEventTouchUpInside];
-        //[_dateButton setContentEdgeInsets:UIEdgeInsetsMake(0, 0, 0, 20.0f)];
-        [_dateButton sizeToFit];
-        _dateButton.enabled = true;
-        [self addSubview:_dateButton];
-    }
-    else {
-        _dateLabel = [[UILabel alloc] init];
-        _dateLabel.font = _smallFont;
-        _dateLabel.text = [[NSString alloc] initWithFormat:@"📅 %@", _meeting.date];
-        [_dateLabel sizeToFit];
-        [self addSubview:_dateLabel];
+            [_dateButton setTitleColor:self.tintColor forState:UIControlStateNormal];
+            [_dateButton addTarget:self action:@selector(dateButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+            
+            [_dateButton sizeToFit];
+            _dateButton.enabled = true;
+            [self addSubview:_dateButton];
+        }
+        else {
+            _dateLabel = [[UILabel alloc] init];
+            _dateLabel.font = _smallFont;
+            _dateLabel.text = [[NSString alloc] initWithFormat:@"📅 %@", _meeting.date];
+            [_dateLabel sizeToFit];
+            [self addSubview:_dateLabel];
+        }
+        
+        if (_meeting.timeIsToBeDiscussed) {
+            _timeButton = [[TGModernButton alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 1.0f, 1.0f)];
+            _timeButton.titleLabel.font = _smallFont;
+            
+            [_timeButton setTitle:@"🕑 Suggest" forState:UIControlStateNormal];
+            [_timeButton setTitleColor:self.tintColor forState:UIControlStateNormal];
+            [_timeButton addTarget:self action:@selector(timeButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+            
+            [_timeButton sizeToFit];
+            _timeButton.enabled = true;
+            [self addSubview:_timeButton];
+        }
+        else {
+            _timeLabel = [[UILabel alloc] init];
+            _timeLabel.font = _smallFont;
+            _timeLabel.text = [[NSString alloc] initWithFormat:@"🕑 %@", _meeting.time];
+            [_timeLabel sizeToFit];
+            [self addSubview:_timeLabel];
+        }
+        
+        if (_meeting.locationIsToBeDiscussed) {
+            _locationButton = [[TGModernButton alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 1.0f, 1.0f)];
+            _locationButton.titleLabel.font = _smallFont;
+            
+            [_locationButton setTitle:@"📍Suggest" forState:UIControlStateNormal];
+            [_locationButton setTitleColor:self.tintColor forState:UIControlStateNormal];
+            [_locationButton addTarget:self action:@selector(locationButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+            
+            [_locationButton sizeToFit];
+            _locationButton.enabled = true;
+            [self addSubview:_locationButton];
+        }
+        else {
+            _locationLabel = [[UILabel alloc] init];
+            _locationLabel.font = _smallFont;
+            _locationLabel.text = [[NSString alloc] initWithFormat:@"📍 %@", _meeting.location];
+            [_locationLabel sizeToFit];
+            [self addSubview:_locationLabel];
+        }
     }
     
-    if (_meeting.timeIsToBeDiscussed) {
-        _timeButton = [[TGModernButton alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 1.0f, 1.0f)];
-        _timeButton.titleLabel.font = _smallFont;
-//        if ([_meeting.timeOptions count]>0) {
-//            [_timeButton setTitle:[[NSString alloc] initWithFormat:@"🕑(%d) Suggest", [_meeting.timeOptions count]] forState:UIControlStateNormal];
-//        }
-//        else
-            [_timeButton setTitle:@"🕑 Suggest" forState:UIControlStateNormal];
-        [_timeButton setTitleColor:self.tintColor forState:UIControlStateNormal];
-        [_timeButton addTarget:self action:@selector(timeButtonPressed) forControlEvents:UIControlEventTouchUpInside];
-        //[_timeButton setContentEdgeInsets:UIEdgeInsetsMake(0, 0, 0, 20.0f)];
-        [_timeButton sizeToFit];
-        _timeButton.enabled = true;
-        [self addSubview:_timeButton];
-    }
-    else {
-        _timeLabel = [[UILabel alloc] init];
-        _timeLabel.font = _smallFont;
-        _timeLabel.text = [[NSString alloc] initWithFormat:@"🕑 %@", _meeting.time];
-        [_timeLabel sizeToFit];
-        [self addSubview:_timeLabel];
-    }
-
-    if (_meeting.locationIsToBeDiscussed) {
-        _locationButton = [[TGModernButton alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 1.0f, 1.0f)];
-        _locationButton.titleLabel.font = _smallFont;
-//        if ([_meeting.locationOptions count]>0) {
-//            [_locationButton setTitle:[[NSString alloc] initWithFormat:@"📍(%d) Suggest", [_meeting.locationOptions count]] forState:UIControlStateNormal];
-//        }
-//        else
-            [_locationButton setTitle:@"📍Suggest" forState:UIControlStateNormal];
-        [_locationButton setTitleColor:self.tintColor forState:UIControlStateNormal];
-        [_locationButton addTarget:self action:@selector(locationButtonPressed) forControlEvents:UIControlEventTouchUpInside];
-        //[_locationButton setContentEdgeInsets:UIEdgeInsetsMake(0, 0, 0, 20.0f)];
-        [_locationButton sizeToFit];
-        _locationButton.enabled = true;
-        [self addSubview:_locationButton];
-    }
-    else {
-        _locationLabel = [[UILabel alloc] init];
-        _locationLabel.font = _smallFont;
-        _locationLabel.text = [[NSString alloc] initWithFormat:@"📍 %@", _meeting.location];
-        [_locationLabel sizeToFit];
-        [self addSubview:_locationLabel];
-    }
+    // if profile is not set yet, show badge with "unread message"
+    if (_meeting.profile == WMMeetingProfileNone)
+        [self setUnreadCount:1];
     
     [self setNeedsLayout];
 }

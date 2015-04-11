@@ -8,11 +8,15 @@
 
 #import "TGModernConversationCompanion.h"
 
+#import "WMMeeting.h"
+
 @interface TGGenericModernConversationCompanion : TGModernConversationCompanion
 {
     int64_t _conversationId;
     
     bool _everyMessageNeedsAuthor;
+    
+    WMMeeting *_meeting;
 }
 
 - (instancetype)initWithConversationId:(int64_t)conversationId mayHaveUnreadMessages:(bool)mayHaveUnreadMessages;
@@ -39,5 +43,10 @@
 - (void)standaloneSendMessages:(NSArray *)messages;
 - (void)standaloneSendFiles:(NSArray *)files;
 - (void)shareVCard;
+
+- (void)controllerWantsToSendMeetingWithDescription:(NSString*)text date:(NSString*)d time:(NSString*)t location:(NSString*)l;
+- (void)loadControllerMeetingTitlePanel;
+- (void)controllerWantsToChangeMeetingProfileFrom:(WMMeetingProfile)oldProfile To:(WMMeetingProfile)newProfile;
+- (void)controllerWantsToChangeLikeTo:(bool)like ForMessageId:(int32_t)mid AndText:(NSString*)text;
 
 @end

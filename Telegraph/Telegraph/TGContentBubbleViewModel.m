@@ -29,6 +29,8 @@
 
 #import "TGDoubleTapGestureRecognizer.h"
 
+#import "WMMeeting.h"
+
 @interface TGContentBubbleViewModel () <UIGestureRecognizerDelegate, TGDoubleTapGestureRecognizerDelegate>
 {
     UITapGestureRecognizer *_unsentButtonTapRecognizer;
@@ -40,29 +42,6 @@
 @end
 
 @implementation TGContentBubbleViewModel
-
--(bool)isTextLikeable:(NSString*)text
-{
-    NSRange r;
-    r = [text rangeOfString:@"📅"];
-    if (r.location != NSNotFound) {
-        return true;
-    }
-    else {
-        r = [text rangeOfString:@"🕑"];
-        if (r.location != NSNotFound) {
-            return true;
-        }
-        else {
-            r = [text rangeOfString:@"📍"];
-            if (r.location != NSNotFound) {
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
 
 - (instancetype)initWithMessage:(TGMessage *)message author:(TGUser *)author context:(TGModernViewContext *)context
 {
@@ -91,7 +70,8 @@
         _read = !message.unread;
         _date = (int32_t)message.date;
         
-        if ([self isTextLikeable:message.text])
+        WMTextType type = [WMMeeting findTextType:message.text];
+        if ((type == WMTextTypeDate) || (type == WMTextTypeTime) || (type == WMTextTypeLocation))
             _backgroundModel = [[TGTextMessageBackgroundViewModel alloc] initWithType:_incoming ? TGTextMessageBackgroundIncomingLikeable : TGTextMessageBackgroundOutgoingLikeable];
         else
             _backgroundModel = [[TGTextMessageBackgroundViewModel alloc] initWithType:_incoming ? TGTextMessageBackgroundIncoming : TGTextMessageBackgroundOutgoing];
@@ -182,9 +162,9 @@
         [_backgroundModel clearHighlight];
 }
 
-- (void)switchLikeToggleWithViewStorage:(TGModernViewStorage *)__unused viewStorage
+- (void)switchLikeTo:(bool)like //WithViewStorage:(TGModernViewStorage *)__unused viewStorage
 {
-    [_backgroundModel switchLikeToggle];
+    [_backgroundModel switchLikeTo:like];
 }
 
 - (void)setAuthorNameColor:(UIColor *)authorNameColor

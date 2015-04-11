@@ -27,6 +27,6 @@ typedef enum {
 - (void)setHighlightedIfBound;
 - (void)clearHighlight;
 
-- (void)switchLikeToggle;
+- (void)switchLikeTo:(bool)like;
 
 @end

@@ -72,7 +72,7 @@ void TGUpdateMessageViewModelLayoutConstants();
 - (CGRect)effectiveContentFrame;
 - (UIView *)referenceViewForImageTransition;
 - (void)setTemporaryHighlighted:(bool)temporaryHighlighted viewStorage:(TGModernViewStorage *)viewStorage;
-- (void)switchLikeToggleWithViewStorage:(TGModernViewStorage *)viewStorage;
+- (void)switchLikeTo:(bool)like; //WithViewStorage:(TGModernViewStorage *)viewStorage;
 
 - (void)updateProgress:(bool)progressVisible progress:(float)progress viewStorage:(TGModernViewStorage *)viewStorage animated:(bool)animated;
 - (void)updateMediaAvailability:(bool)mediaIsAvailable viewStorage:(TGModernViewStorage *)viewStorage;

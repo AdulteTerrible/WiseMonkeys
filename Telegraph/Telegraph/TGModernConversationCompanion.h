@@ -12,8 +12,6 @@
 
 #import "TGMessageRange.h"
 
-#import "WMMeeting.h"
-
 @class TGModernConversationController;
 @class TGModernViewContext;
 @class TGMessage;
@@ -48,8 +46,6 @@ typedef enum {
 @interface TGModernConversationCompanion : NSObject <ASWatcher>
 {
     NSMutableArray *_items;
-    
-    WMMeeting *_meeting;
 }
 
 @property (nonatomic, strong) ASHandle *actionHandle;
@@ -102,7 +98,7 @@ typedef enum {
 - (void)controllerDidChangeInputText:(NSString *)inputText;
 - (void)controllerWantsToSendTextMessage:(NSString *)text;
 - (void)controllerWantsToSendMapWithLatitude:(double)latitude longitude:(double)longitude;
-- (void)controllerWantsToSendMeetingWithDescription:(NSString*)text date:(NSString*)d time:(NSString*)t location:(NSString*)l;
+
 - (NSURL *)fileUrlForDocumentMedia:(TGDocumentMediaAttachment *)documentMedia;
 - (NSDictionary *)imageDescriptionFromImage:(UIImage *)image optionalAssetUrl:(NSString *)assetUrl;
 - (NSDictionary *)imageDescriptionFromBingSearchResult:(TGBingSearchResultItem *)item;
@@ -134,6 +130,7 @@ typedef enum {
 - (bool)shouldAutomaticallyDownloadPhotos;
 - (bool)allowMessageForwarding;
 - (bool)allowContactSharing;
+- (bool)allowNewMeeting;
 - (bool)encryptUploads;
 - (NSDictionary *)userActivityData;
 
@@ -185,6 +182,11 @@ typedef enum {
 - (void)serviceNotificationsForMessageIds:(NSArray *)messageIds;
 - (void)markMessagesAsViewed:(NSArray *)messageIds;
 
+- (bool)isMeetingIncludedIn:(TGMessage *)message;
+- (void)controllerWantsToSendMeetingWithDescription:(NSString*)text date:(NSString*)d time:(NSString*)t location:(NSString*)l;
 - (void)loadControllerMeetingTitlePanel;
+- (void)saveMeetingData;
+//- (void)controllerWantsToChangeMeetingProfileFrom:(WMMeetingProfile)oldProfile To:(WMMeetingProfile)newProfile;
+- (void)controllerWantsToChangeLikeTo:(bool)like ForMessageId:(int32_t)messageId AndText:(NSString*)text;
 
 @end

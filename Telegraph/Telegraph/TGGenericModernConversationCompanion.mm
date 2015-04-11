@@ -70,6 +70,7 @@
 #import "TGWebSearchInternalImageResult.h"
 
 #import "WMMeetingScreenController.h"
+#import "WMModernConversationGenericMeetingPanel.h"
 
 #import <map>
 #import <vector>
@@ -115,8 +116,6 @@ typedef enum {
     NSUInteger _layer;
     
     NSString *_currentStickerSearchPath;
-    
-    //WMModernConversationGenericMeetingPanel *_meetingPanel;
 }
 
 @end
@@ -156,15 +155,191 @@ typedef enum {
                 }];
             }
         });
+        
+        // Meeting setup
+        _meeting = [[WMMeeting alloc] initWithConversationId:_conversationId]; //[_meeting reset];
+        
+        _meeting.profileChanged = ^(WMMeetingProfile oldProfile, WMMeetingProfile newProfile)
+        {
+            __strong TGGenericModernConversationCompanion *strongSelf = weakSelf;
+            if (strongSelf != nil)
+                [self controllerWantsToChangeMeetingProfileFrom:oldProfile To:newProfile];
+        };
+
     }
     return self;
 }
 
 - (void)dealloc
 {
+    [_meeting saveAsPList];
+    
     if (_dynamicTypeObserver != nil)
         [[NSNotificationCenter defaultCenter] removeObserver:_dynamicTypeObserver];
 }
+
+#pragma mark -
+#pragma mark Meetings Management
+
+- (void)saveMeetingData
+{
+    [_meeting saveAsPList];
+}
+
+- (bool)isMeetingIncludedIn:(TGMessage *)message // if true, message is not displayed
+{
+    if ((_meeting.profile == WMMeetingProfileCommitted)
+        ||(_meeting.profile == WMMeetingProfileIndependent)
+        ||(_meeting.profile == WMMeetingProfileNotAvailable)) {             // only negotiators
+        if ([WMMeeting findTextType:message.text] != WMTextTypePlain)       // wants to be notified of options
+            return true;
+    }
+    // scan for a meeting hidden as a contact in attachment
+    // if found, extract it
+    if ((message.mediaAttachments.count != 0)) { // (!message.outgoing)&& // consider only incoming messages, to avoid feeding on own messages
+        for (TGMediaAttachment *attachment in message.mediaAttachments) {
+            if (attachment.type == TGContactMediaAttachmentType) {
+                TGContactMediaAttachment *contact = (TGContactMediaAttachment *)attachment;
+                if ([contact.phoneNumber isEqualToString:@"11111111"]) { // haack: it's a meeting creation message
+                    if (!_meeting.isActive) {
+                        NSArray *list1 = [contact.firstName componentsSeparatedByString:@";"];
+                        if (list1.count >0){
+                            _meeting.meetingDescription = [list1 objectAtIndex:0];
+                            if (list1.count >1) {
+                                _meeting.date = [list1 objectAtIndex:1];
+                                _meeting.dateIsToBeDiscussed = ([_meeting.date isEqualToString:@""]);
+                            }
+                        }
+                        
+                        NSArray *list2 = [contact.lastName componentsSeparatedByString:@";"];
+                        if (list2.count >0){
+                            _meeting.time = [list2 objectAtIndex:0];
+                            _meeting.timeIsToBeDiscussed = ([_meeting.time isEqualToString:@""]);
+                            if (list2.count >1) {
+                                _meeting.location = [list2 objectAtIndex:1];
+                                _meeting.locationIsToBeDiscussed = ([_meeting.location isEqualToString:@""]);
+                            }
+                        }
+                        
+                        _meeting.isActive = true;
+                        
+                        TGDispatchOnMainThread(^
+                                               {
+                                                   [self loadControllerMeetingTitlePanel];
+                                               });
+                    }
+                    return true;
+                }
+                else if ([contact.phoneNumber isEqualToString:@"22222222"]) { // haack: it's a meeting "like" message
+                    if ((!message.outgoing)&&(_meeting.isActive)) {
+                        NSArray *list = [contact.lastName componentsSeparatedByString:@";"];
+                        if (list.count >1){
+                            bool like = [[list objectAtIndex:0] isEqualToString:@"+"];
+                            NSString* text = [list objectAtIndex:1];
+                            
+                            //TGModernConversationController *controller = self.controller;
+                            //NSString* text = [controller findMessageTextForId:mid];
+                            
+                            if (text != nil)
+                                [_meeting updateLikesFromIncomingMessage:text WithLike:like];
+                        }
+                    }
+                    
+                    return true;
+                }
+                else if ([contact.phoneNumber isEqualToString:@"33333333"]) { // haack: it's a meeting profile change message
+                    if (_meeting.isActive) {
+                        
+                    }
+                    return true;
+                }
+            }
+        }
+    }
+    
+    return false;
+}
+
+- (void)loadControllerMeetingTitlePanel
+{
+    if (_meeting.isActive)
+        [self _createOrUpdateMeetingTitlePanel:true];
+}
+
+- (void)_createOrUpdateMeetingTitlePanel:(bool)createIfNeeded
+{
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone)
+    {
+        WMModernConversationGenericMeetingPanel* panel = [[WMModernConversationGenericMeetingPanel alloc] init];
+        panel.companionHandle = self.actionHandle;
+        panel.meeting = self->_meeting;
+        
+        [(self.controller) setMeetingTitlePanel:panel];
+    }
+}
+
+- (void)controllerWantsToSendMeetingWithDescription:(NSString*)text date:(NSString*)d time:(NSString*)t location:(NSString*)l
+{
+    // update meeting
+    _meeting.meetingDescription = text;
+    
+    _meeting.dateIsToBeDiscussed = ([d isEqual:[NSNull null]]||[d isEqualToString:@""]);
+    if (!_meeting.dateIsToBeDiscussed)
+        _meeting.date = d;
+    
+    _meeting.timeIsToBeDiscussed = ([t isEqual:[NSNull null]]||[t isEqualToString:@""]);
+    if (!_meeting.timeIsToBeDiscussed)
+        _meeting.time = t;
+    
+    _meeting.locationIsToBeDiscussed = ([l isEqual:[NSNull null]]||[l isEqualToString:@""]);
+    if (!_meeting.locationIsToBeDiscussed)
+        _meeting.location = l;
+    
+    _meeting.isActive = true;
+    _meeting.wasCreatedByLocalUser = true;
+    
+    // the RPCs for my own "meeting type" get rejected by server
+    // so haacking the contact transmission
+    TGUser* fake = [[TGUser alloc] init];
+    fake.firstName = [[NSString alloc] initWithFormat:@"%@;%@", text,d];
+    fake.lastName = [[NSString alloc] initWithFormat:@"%@;%@", t,l];
+    fake.phoneNumber = @"11111111";
+    [self controllerWantsToSendContact:fake];
+}
+
+- (void)controllerWantsToChangeLikeTo:(bool)like ForMessageId:(int32_t)messageId AndText:(NSString*)text
+{
+    [_meeting updateLikesFromLocalInteractionWithMessage:text ofId:messageId AndLike:like];
+    
+    // the RPCs for my own "meeting type" get rejected by server
+    // so haacking the contact transmission
+    TGUser* fake = [[TGUser alloc] init];
+    //fake.firstName = messageId;
+    fake.lastName = [[NSString alloc] initWithFormat:@"%@;%@", (like?@"+":@"-"), text];
+    fake.phoneNumber = @"22222222";
+    [self controllerWantsToSendContact:fake];
+}
+
+- (void) controllerWantsToChangeMeetingProfileFrom:(WMMeetingProfile)oldProfile To:(WMMeetingProfile)newProfile
+{
+    // send profile change
+    // the RPCs for my own "meeting type" get rejected by server
+    // so haacking the contact transmission
+    TGUser* fake = [[TGUser alloc] init];
+    fake.firstName = [[NSString alloc]initWithFormat:@"%d", oldProfile];
+    fake.lastName = [[NSString alloc]initWithFormat:@"%d", newProfile];
+    fake.phoneNumber = @"33333333";
+    [self controllerWantsToSendContact:fake];
+}
+
+- (bool)allowNewMeeting
+{
+    return (!_meeting.isActive);
+}
+
+
+#pragma mark -
+
 
 - (void)setOthersUnreadCount:(int)unreadCount
 {
@@ -506,6 +681,11 @@ typedef enum {
         TGModernConversationController *controller = self.controller;
         [controller setGlobalUnreadCount:_initialUnreadCount];
     }
+    
+    // load stored meeting data
+    if ([_meeting loadFromPList]) {
+        [self loadControllerMeetingTitlePanel];
+    }
 }
 
 - (void)_controllerWillAppearAnimated:(bool)animated firstTime:(bool)firstTime
@@ -540,6 +720,8 @@ typedef enum {
             [controller setInputText:inputText replace:true];
         }
     }
+    
+    [self loadControllerMeetingTitlePanel];
 }
 
 - (void)_controllerDidAppear:(bool)firstTime
@@ -1151,32 +1333,6 @@ typedef enum {
         preparedMessage.messageLifetime = [self messageLifetime];
         [self _sendPreparedMessages:@[preparedMessage] automaticallyAddToList:true withIntent:TGSendMessageIntentOther];
     }];
-}
-
-- (void)controllerWantsToSendMeetingWithDescription:(NSString*)text date:(NSString*)d time:(NSString*)t location:(NSString*)l
-{
-    _meeting.meetingDescription = text;
-    
-    _meeting.dateIsToBeDiscussed = ([d isEqual:[NSNull null]]);
-    if (!_meeting.dateIsToBeDiscussed)
-        _meeting.date = d;
-    
-    _meeting.timeIsToBeDiscussed = ([t isEqual:[NSNull null]]);
-    if (!_meeting.timeIsToBeDiscussed)
-        _meeting.time = t;
-    
-    _meeting.locationIsToBeDiscussed = ([l isEqual:[NSNull null]]);
-    if (!_meeting.locationIsToBeDiscussed)
-        _meeting.location = l;
-
-
-    // the RPCs for my own "meeting type" get rejected by server
-    // so haacking the contact transmission
-    TGUser* fake = [[TGUser alloc] init];
-    fake.firstName = [[NSString alloc] initWithFormat:@"%@;%@", text,d];
-    fake.lastName = [[NSString alloc] initWithFormat:@"%@;%@", t,l];
-    fake.phoneNumber = @"11111111";
-    [self controllerWantsToSendContact:fake];
 }
 
 - (NSURL *)fileUrlForDocumentMedia:(TGDocumentMediaAttachment *)documentMedia
@@ -2547,10 +2703,10 @@ typedef enum {
     }
     if ([action isEqualToString:@"showMeetingScreen"])
     {
-        WMMeetingScreenController *groupInfoController = [[WMMeetingScreenController alloc] initWithMeeting:_meeting];
+        WMMeetingScreenController *meetingController = [[WMMeetingScreenController alloc] initWithMeeting:_meeting];
         
         TGModernConversationController *controller = self.controller;
-        [controller.navigationController pushViewController:groupInfoController animated:true];
+        [controller.navigationController pushViewController:meetingController animated:true];
     }
     else if ([action isEqualToString:@"userAvatarTapped"])
     {
@@ -3179,6 +3335,15 @@ typedef enum {
 
                 [self _addMessages:messages animated:false intent:historyRequestType == TGHistoryRequestBelow ? TGModernConversationAddMessageIntentLoadMoreMessagesBelow : TGModernConversationAddMessageIntentLoadMoreMessagesAbove];
                 
+                // restore Like status for messages
+                if ([_meeting messagesReceivedLikes]) {
+                    for (TGMessageModernConversationItem *messageItem in _items) {
+                        bool like = [_meeting findLikeStatusOfMessageWithId:messageItem->_message.mid];
+                        if (like)
+                            [messageItem switchLikeTo:like]; //WithViewStorage:_viewStorage];
+                    }
+                }
+
                 TGDispatchOnMainThread(^
                 {
                     TGModernConversationController *controller = self.controller;

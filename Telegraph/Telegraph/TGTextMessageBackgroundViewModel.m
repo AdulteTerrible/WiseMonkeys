@@ -167,7 +167,7 @@ TGTextMessageBackgroundImageDef(outgoingPartialNotLikedImage, false, @"ModernBub
         else
             newImage = _highlighted ? outgoingImageHighlighted() : outgoingImage();
     }
-    if (_type == TGTextMessageBackgroundIncomingLikeable)
+    else if (_type == TGTextMessageBackgroundIncomingLikeable)
     {
         if (_partialMode)
             newImage = _highlighted ? incomingPartialImageHighlighted() : (_liked ? incomingPartialLikedImage() : incomingPartialNotLikedImage());
@@ -198,11 +198,11 @@ TGTextMessageBackgroundImageDef(outgoingPartialNotLikedImage, false, @"ModernBub
     }
 }
 
-- (void)switchLikeToggle
+- (void)switchLikeTo:(bool)like
 {
     if ([self boundView] != nil)
     {
-        _liked = !_liked;
+        _liked = like;
         _imageIsValid = false;
         
         self.image = [self currentImage];

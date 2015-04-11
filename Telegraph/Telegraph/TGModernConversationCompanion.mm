@@ -42,8 +42,6 @@
 
 #import "TGTelegraph.h"
 
-#import "WMModernConversationGenericMeetingPanel.h"
-
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 60000 // iOS 6.0 or later
 #define NEEDS_DISPATCH_RETAIN_RELEASE 0
 #else                                         // iOS 5.X or earlier
@@ -133,9 +131,6 @@ static void dispatchOnMessageQueue(dispatch_block_t block, bool synchronous)
         viewContext.companion = self;
         viewContext.companionHandle = _actionHandle;
         _viewContext = viewContext;
-        
-        _meeting = [[WMMeeting alloc] init];
-        _meeting.isActive = false;
     }
     return self;
 }
@@ -180,137 +175,6 @@ static void dispatchOnMessageQueue(dispatch_block_t block, bool synchronous)
 {
     dispatchOnMessageQueue(block, false);
 }
-
-//////////// Dealing with Meetings
-
--(bool) isMeetingIncludedIn:(TGMessage *)message
-{
-    // scan for a meeting hidden as a contact in attachment
-    // if found, extract it
-    if (message.mediaAttachments.count != 0) {
-        for (TGMediaAttachment *attachment in message.mediaAttachments) {
-            if (attachment.type == TGContactMediaAttachmentType) {
-                TGContactMediaAttachment *contact = (TGContactMediaAttachment *)attachment;
-                if ([contact.phoneNumber isEqualToString:@"11111111"]) { // haack: it's a meeting creation message
-                    if (!_meeting.isActive) {
-                        NSArray *list1 = [contact.firstName componentsSeparatedByString:@";"];
-                        if (list1.count >0){
-                            _meeting.meetingDescription = [list1 objectAtIndex:0];
-                            if (list1.count >1) {
-                                _meeting.date = [list1 objectAtIndex:1];
-                                _meeting.dateIsToBeDiscussed = ([_meeting.date isEqualToString:@""]);
-                            }
-                        }
-                        
-                        NSArray *list2 = [contact.lastName componentsSeparatedByString:@";"];
-                        if (list2.count >0){
-                            _meeting.time = [list2 objectAtIndex:0];
-                            _meeting.timeIsToBeDiscussed = ([_meeting.time isEqualToString:@""]);
-                            if (list2.count >1) {
-                                _meeting.location = [list2 objectAtIndex:1];
-                                _meeting.locationIsToBeDiscussed = ([_meeting.location isEqualToString:@""]);
-                            }
-                        }
-                        
-                        _meeting.isActive = true;
-                        
-                        TGDispatchOnMainThread(^
-                        {
-                             [self loadControllerMeetingTitlePanel];
-                         });
-                    }
-                    return true;
-                }
-                else if ([contact.phoneNumber isEqualToString:@"22222222"]) { // haack: it's a meeting "like" message
-                    if (_meeting.isActive) {
-                        NSRange r;
-                        r = [contact.firstName rangeOfString:@"📅"];
-                        if (r.location != NSNotFound) {
-                            NSString* string = (NSString*)[_meeting.dateOptions objectForKey:contact.firstName];
-                            if (string == nil) {
-                                [_meeting.dateOptions setObject:@"1" forKey:contact.firstName];
-                            }
-                            else {
-                                int i = [string intValue];
-                                if ([contact.lastName isEqualToString:@"+"]) {
-                                    [_meeting.dateOptions setObject:[NSString stringWithFormat:@"%d",++i] forKey:contact.firstName];
-                                }
-                                else {
-                                    [_meeting.dateOptions setObject:[NSString stringWithFormat:@"%d",--i] forKey:contact.firstName];
-                                }
-                            }
-                        }
-                        else {
-                            r = [contact.firstName rangeOfString:@"🕑"];
-                            if (r.location != NSNotFound) {
-                                NSString* string = (NSString*)[_meeting.timeOptions objectForKey:contact.firstName];
-                                if (string == nil) {
-                                    [_meeting.timeOptions setObject:@"1" forKey:contact.firstName];
-                                }
-                                else {
-                                    int i = [string intValue];
-                                    if ([contact.lastName isEqualToString:@"+"]) {
-                                        [_meeting.timeOptions setObject:[NSString stringWithFormat:@"%d",++i] forKey:contact.firstName];
-                                    }
-                                    else {
-                                        [_meeting.timeOptions setObject:[NSString stringWithFormat:@"%d",--i] forKey:contact.firstName];
-                                    }
-                                }
-                            }
-                            else {
-                                r = [contact.firstName rangeOfString:@"📍"];
-                                if (r.location != NSNotFound) {
-                                    NSString* string = (NSString*)[_meeting.locationOptions objectForKey:contact.firstName];
-                                    if (string == nil) {
-                                        [_meeting.locationOptions setObject:@"1" forKey:contact.firstName];
-                                    }
-                                    else {
-                                        int i = [string intValue];
-                                        if ([contact.lastName isEqualToString:@"+"]) {
-                                            [_meeting.locationOptions setObject:[NSString stringWithFormat:@"%d",++i] forKey:contact.firstName];
-                                        }
-                                        else {
-                                            [_meeting.locationOptions setObject:[NSString stringWithFormat:@"%d",--i] forKey:contact.firstName];
-                                        }
-                                    }
-
-                                }
-                            }
-                        }
-                    }
-                    //[self _createOrUpdateMeetingTitlePanel:true];
-                    return true;
-                }
-            }
-        }
-    }
-    
-    return false;
-}
-
-- (void)loadControllerMeetingTitlePanel
-{
-    [self _createOrUpdateMeetingTitlePanel:true];
-}
-
-- (void)_createOrUpdateMeetingTitlePanel:(bool)createIfNeeded
-{
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone)
-    {
-        WMModernConversationGenericMeetingPanel* panel = [[WMModernConversationGenericMeetingPanel alloc] init];
-        panel.companionHandle = self.actionHandle;
-        panel.meeting = self->_meeting;
-        
-        //NSMutableArray *actions = [[NSMutableArray alloc] init];
-        //[actions addObject:@{@"title": _meeting.meetingDescription, @"action": @"edit"}];
-        //[actions addObject:@{@"title": _meeting.date, @"action": @"info"}];
-        //[panel setButtonsWithTitlesAndActions:actions];
-        
-        [_controller setMeetingTitlePanel:panel];
-    }
-}
-
-//////////////////
 
 - (void)lockSendMessageSemaphore
 {
@@ -523,10 +387,6 @@ static void dispatchOnMessageQueue(dispatch_block_t block, bool synchronous)
 {
 }
 
-- (void)controllerWantsToSendMeetingWithDescription:(NSString*)text date:(NSString*)d time:(NSString*)t location:(NSString*)l
-{
-}
-
 - (NSURL *)fileUrlForDocumentMedia:(TGDocumentMediaAttachment *)__unused documentMedia
 {
     return nil;
@@ -666,6 +526,11 @@ static void dispatchOnMessageQueue(dispatch_block_t block, bool synchronous)
 }
 
 - (bool)allowContactSharing
+{
+    return true;
+}
+
+- (bool)allowNewMeeting
 {
     return true;
 }
@@ -1755,18 +1620,17 @@ static void dispatchOnMessageQueue(dispatch_block_t block, bool synchronous)
 {
     if ([action isEqualToString:@"messageLikeToggleRequested"])
     {
-        TGModernConversationController *controller = _controller;
-        [controller switchLikeToggleForMessage:[options[@"mid"] int32Value]];
+        bool like = [options[@"change"] isEqualToString:@"+"];
+        int32_t mid = [options[@"mid"] int32Value];
         
-        // the RPCs for my own "meeting type" get rejected by server
-        // so haacking the contact transmission
-        TGUser* fake = [[TGUser alloc] init];
-        fake.firstName = options[@"text"];
-        fake.lastName = options[@"change"];
-        fake.phoneNumber = @"22222222";
-        [self controllerWantsToSendContact:fake];
+        // switch Like on screen
+        TGModernConversationController *controller = self.controller;
+        [controller switchLikeTo:like ForMessage:mid];
+
+        [self controllerWantsToChangeLikeTo:like ForMessageId:mid AndText:options[@"text"]];
     }
-    if ([action isEqualToString:@"messageSelectionRequested"])
+    else
+        if ([action isEqualToString:@"messageSelectionRequested"])
     {   
         TGModernConversationController *controller = _controller;
         [controller highlightAndShowActionsMenuForMessage:[options[@"mid"] int32Value]];
@@ -1896,5 +1760,27 @@ static void dispatchOnMessageQueue(dispatch_block_t block, bool synchronous)
 - (void)markMessagesAsViewed:(NSArray *)__unused messageIds
 {
 }
+
+- (bool)isMeetingIncludedIn:(TGMessage *)message
+{
+    return false;
+}
+
+- (void)controllerWantsToSendMeetingWithDescription:(NSString*)text date:(NSString*)d time:(NSString*)t location:(NSString*)l
+{
+}
+
+- (void)loadControllerMeetingTitlePanel
+{
+}
+
+- (void)saveMeetingData
+{
+}
+
+- (void)controllerWantsToChangeLikeTo:(bool)like ForMessageId:(NSString*)messageId AndText:(NSString*)text
+{
+}
+
 
 @end

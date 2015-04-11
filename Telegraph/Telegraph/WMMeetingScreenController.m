@@ -67,19 +67,24 @@
         //checkItem.requiresFullSeparator = true;
         //[profileSectionItems addObject:checkItem];
         
-        TGCheckCollectionItem *checkItem0 = [[TGCheckCollectionItem alloc] initWithTitle:@"🙈 I want to discuss options." action:@selector(negotiatorProfilePressed:)];
-        [checkItem0 setIsChecked:(_meeting.profile == WMMeetingProfileNegotiator)];
-        [profileSectionItems addObject:checkItem0];
+        NSString* committedLabel = @"🙉 I'll be there in any case.";
+        
+        if (_meeting.dateIsToBeDiscussed || _meeting.timeIsToBeDiscussed || _meeting.locationIsToBeDiscussed) { // at least 1 parameter is to be discussed
+            TGCheckCollectionItem *checkItem0 = [[TGCheckCollectionItem alloc] initWithTitle:@"🙈 I want to discuss options." action:@selector(negotiatorProfilePressed:)];
+            [checkItem0 setIsChecked:(_meeting.profile == WMMeetingProfileNegotiator)];
+            [profileSectionItems addObject:checkItem0];
+        }
+        else // no negotiation
+            committedLabel = @"🙉 I'll be there!";
         
         TGCheckCollectionItem *checkItem2 = [[TGCheckCollectionItem alloc] initWithTitle:@"🙊 I'll decide later if I attend." action:@selector(independentProfilePressed:)];
         [checkItem2 setIsChecked:(_meeting.profile == WMMeetingProfileIndependent)];
         [profileSectionItems addObject:checkItem2];
         
-        TGCheckCollectionItem *checkItem1 = [[TGCheckCollectionItem alloc] initWithTitle:@"🙉 I'll be there in any case." action:@selector(committedProfilePressed:)];
+        TGCheckCollectionItem *checkItem1 = [[TGCheckCollectionItem alloc] initWithTitle:committedLabel action:@selector(committedProfilePressed:)];
         [checkItem1 setIsChecked:(_meeting.profile == WMMeetingProfileCommitted)];
         [profileSectionItems addObject:checkItem1];
         
-
         TGCheckCollectionItem *checkItem3 = [[TGCheckCollectionItem alloc] initWithTitle:@"❌ I'm not available." action:@selector(notAvailableProfilePressed:)];
         [checkItem3 setIsChecked:(_meeting.profile == WMMeetingProfileNotAvailable)];
         [profileSectionItems addObject:checkItem3];
@@ -93,15 +98,16 @@
         _profileSection.insets = topSectionInsets;
         [self.menuSections addSection:_profileSection];
         
-        
-        TGButtonCollectionItem *resetItem = [[TGButtonCollectionItem alloc] initWithTitle:@"Close discussion" action:@selector(resetAllNotifications)];
-        //resetItem.titleColor = TGDestructiveAccentColor();
-        resetItem.deselectAutomatically = true;
-        TGCollectionMenuSection *resetSection = [[TGCollectionMenuSection alloc] initWithItems:@[
-                                                                                                 resetItem,
-                                                                                                 [[TGCommentCollectionItem alloc] initWithText:@"Notify the members the discussion is about to close, and after a grace period, select the most popular options."],
-                                                                                                 ]];
-        [self.menuSections addSection:resetSection];
+        if (_meeting.wasCreatedByLocalUser) {
+            TGButtonCollectionItem *resetItem = [[TGButtonCollectionItem alloc] initWithTitle:@"Close discussion" action:@selector(closeDiscussion)];
+            //resetItem.titleColor = TGDestructiveAccentColor();
+            resetItem.deselectAutomatically = true;
+            TGCollectionMenuSection *resetSection = [[TGCollectionMenuSection alloc] initWithItems:@[
+                                                                                                     resetItem,
+                                                                                                     [[TGCommentCollectionItem alloc] initWithText:@"Notify the members the discussion is about to close, and after a grace period, select the most popular options."],
+                                                                                                     ]];
+            [self.menuSections addSection:resetSection];
+        }
     }
     return self;
 }
@@ -114,18 +120,9 @@
 
 #pragma mark -
 
-- (void)resetAllNotifications
+- (void)closeDiscussion
 {
-//    [[[TGActionSheet alloc] initWithTitle:TGLocalized(@"Notifications.ResetAllNotificationsHelp") actions:@[
-//        [[TGActionSheetAction alloc] initWithTitle:TGLocalized(@"Notifications.Reset") action:@"reset" type:TGActionSheetActionTypeDestructive],
-//        [[TGActionSheetAction alloc] initWithTitle:TGLocalized(@"Common.Cancel") action:@"cancel" type:TGActionSheetActionTypeCancel]
-//    ] actionBlock:^(WMMeetingScreenController *controller, NSString *action)
-//    {
-//        if ([action isEqualToString:@"reset"])
-//        {
-//            [controller _commitResetAllNotitications];
-//        }
-//    } target:self] showInView:self.view];
+    [_meeting reset];
 }
 
 - (void)_commitResetAllNotitications
@@ -249,13 +246,14 @@
     NSIndexPath *indexPath = [self indexPathForItem:checkCollectionItem];
     if (indexPath != nil)
     {
+        [self _selectProfileItem:checkCollectionItem];
+        
+        _profileComment.text = @"You can negotiate the get-together by sending and receiving options for date/time/location, and liking them.";
+        
         if (_meeting.profile == WMMeetingProfileNone) {
             [_profileHeader setTitle:@"PROFILE"];
         }
         _meeting.profile = WMMeetingProfileNegotiator;
-        [self _selectProfileItem:checkCollectionItem];
-        
-        _profileComment.text = @"You can negotiate the get-together by sending and receiving options for date/time/location, and liking them.";
     }
 }
 
@@ -264,13 +262,14 @@
     NSIndexPath *indexPath = [self indexPathForItem:checkCollectionItem];
     if (indexPath != nil)
     {
+        [self _selectProfileItem:checkCollectionItem];
+        
+        _profileComment.text = @"You will be only notified of the get-together once date, time and location are known. You can then decide independently to attend.";
+        
         if (_meeting.profile == WMMeetingProfileNone) {
             [_profileHeader setTitle:@"PROFILE"];
         }
         _meeting.profile = WMMeetingProfileIndependent;
-        [self _selectProfileItem:checkCollectionItem];
-        
-        _profileComment.text = @"You will be only notified of the get-together once date, time and location are known. You can then decide independently to attend.";
     }
 }
 
@@ -279,13 +278,13 @@
     NSIndexPath *indexPath = [self indexPathForItem:checkCollectionItem];
     if (indexPath != nil)
     {
+        [self _selectProfileItem:checkCollectionItem];
+        
+        _profileComment.text = @"You will be only notified of the get-together once date, time and location are known. Thank you for participating unconditionnaly!";
         if (_meeting.profile == WMMeetingProfileNone) {
             [_profileHeader setTitle:@"PROFILE"];
         }
         _meeting.profile = WMMeetingProfileCommitted;
-        [self _selectProfileItem:checkCollectionItem];
-        
-        _profileComment.text = @"You will be only notified of the get-together once date, time and location are known. Thank you for participating unconditionnaly!";
     }
 }
 
@@ -294,13 +293,13 @@
     NSIndexPath *indexPath = [self indexPathForItem:checkCollectionItem];
     if (indexPath != nil)
     {
+        [self _selectProfileItem:checkCollectionItem];
+        
+        _profileComment.text = @"You will not receive any notification for this get-together. You can change profile any time.";
         if (_meeting.profile == WMMeetingProfileNone) {
             [_profileHeader setTitle:@"PROFILE"];
         }
         _meeting.profile = WMMeetingProfileNotAvailable;
-        [self _selectProfileItem:checkCollectionItem];
-        
-        _profileComment.text = @"You will not receive any notification for this get-together. You can change profile any time.";
     }
 }
 

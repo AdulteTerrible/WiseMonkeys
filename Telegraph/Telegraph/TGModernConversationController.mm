@@ -704,6 +704,8 @@ typedef enum {
         _currentActivity = nil;
     }
     
+    [_companion saveMeetingData];
+    
     [super viewWillDisappear:animated];
 }
 
@@ -1890,22 +1892,7 @@ static CGPoint locationForKeyboardWindowWithOffset(CGFloat offset, UIInterfaceOr
                 {
                     WMMeetingMediaAttachment *meetingAttachment = (WMMeetingMediaAttachment *)attachment;
                     
-                    NSAssert(false, @"To be implemented");
-//                    TGMapViewController *mapController = [[TGMapViewController alloc] initInMapModeWithLatitude:mapAttachment.latitude longitude:mapAttachment.longitude user:[TGDatabaseInstance() loadUser:(int32_t)mediaMessageItem->_message.fromUid]];
-//                    mapController.watcher = _companion.actionHandle;
-//                    if ([_companion allowMessageForwarding])
-//                        mapController.message = mediaMessageItem->_message;
-//                    
-//                    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone)
-//                        [self.navigationController pushViewController:mapController animated:true];
-//                    else
-//                    {
-//                        TGNavigationController *navigationController = [TGNavigationController navigationControllerWithControllers:@[mapController]];
-//                        navigationController.presentationStyle = TGNavigationControllerPresentationStyleInFormSheet;
-//                        navigationController.modalPresentationStyle = UIModalPresentationFormSheet;
-//                        [self presentViewController:navigationController animated:true completion:nil];
-//                    }
-                    
+                    NSAssert(false, @"Should have been implemented, if server accepted new attachment types. Instead meeting data is encapsulated in contact messages -- search for haack in the code");                    
                     break;
                 }
                 case TGLocationMediaAttachmentType:
@@ -2586,7 +2573,7 @@ static CGPoint locationForKeyboardWindowWithOffset(CGFloat offset, UIInterfaceOr
     }
 }
 
-- (void)switchLikeToggleForMessage:(int32_t)messageId
+- (void)switchLikeTo:(bool)like ForMessage:(int32_t)messageId
 {
     TGMessageModernConversationItem *likedItem = nil;
     
@@ -2596,13 +2583,39 @@ static CGPoint locationForKeyboardWindowWithOffset(CGFloat offset, UIInterfaceOr
         if (messageItem != nil && messageItem->_message.mid == messageId)
         {
             likedItem = messageItem;
-            [likedItem switchLikeToggleWithViewStorage:_viewStorage];
+            [likedItem switchLikeTo:like]; //WithViewStorage:_viewStorage];
             
             break;
         }
     }
 }
 
+//- (void)updateLikesWithMeeting:(WMMeeting*)meeting
+//{
+//    for (TGModernCollectionCell *cell in _collectionView.visibleCells)
+//    {
+//        TGMessageModernConversationItem *messageItem = cell.boundItem;
+//        if (messageItem != nil) {
+//            bool like = [meeting findLikeStatusOfMessageWithId:messageItem->_message.mid];
+//            
+//            if (like)
+//                [messageItem switchLikeTo:like WithViewStorage:_viewStorage];
+//        }
+//    }
+//}
+
+- (NSString*)findMessageTextForId:(int32_t)messageId
+{
+    for (TGModernCollectionCell *cell in _collectionView.visibleCells)
+    {
+        TGMessageModernConversationItem *messageItem = cell.boundItem;
+        if (messageItem != nil && messageItem->_message.mid == messageId)
+        {
+            return messageItem->_message.text;
+        }
+    }
+    return nil;
+}
 
 - (void)showActionsMenuForLink:(NSString *)url
 {
@@ -2879,16 +2892,14 @@ static CGPoint locationForKeyboardWindowWithOffset(CGFloat offset, UIInterfaceOr
 
 - (void)setPrimaryTitlePanel:(TGModernConversationTitlePanel *)titlePanel
 {
-    /*
     if (_primaryTitlePanel != titlePanel)
     {
-        bool applyAsCurrent = _currentTitlePanel != nil && _currentTitlePanel == _primaryTitlePanel;
-        _primaryTitlePanel = titlePanel;
-        
-        if (applyAsCurrent)
-            [self setCurrentTitlePanel:titlePanel animation:ABS(CFAbsoluteTimeGetCurrent() - _willAppearTimestamp) > 0.18 ? TGModernConversationPanelAnimationSlide : TGModernConversationPanelAnimationNone];
+//        bool applyAsCurrent = _currentTitlePanel != nil && _currentTitlePanel == _primaryTitlePanel;
+//        _primaryTitlePanel = titlePanel;
+//        
+//        if (applyAsCurrent)
+//            [self setCurrentTitlePanel:titlePanel animation:ABS(CFAbsoluteTimeGetCurrent() - _willAppearTimestamp) > 0.18 ? TGModernConversationPanelAnimationSlide : TGModernConversationPanelAnimationNone];
     }
-    */
 }
 
 - (void)setMeetingTitlePanel:(TGModernConversationTitlePanel *)titlePanel
@@ -3171,7 +3182,7 @@ static CGPoint locationForKeyboardWindowWithOffset(CGFloat offset, UIInterfaceOr
 
 - (void)titleViewTapped:(TGModernConversationTitleView *)__unused titleView
 {
-    // disabled, to avoid mix up with meeting panel
+    // haack: disabled, to avoid mix up with meeting panel
     /*
     if (_editingMode)
         return;
@@ -3352,26 +3363,27 @@ static CGPoint locationForKeyboardWindowWithOffset(CGFloat offset, UIInterfaceOr
                 [strongSelf _displayPhotoVideoPicker:true];
             }
         }]];
-        [items addObject:[[TGAttachmentSheetButtonItemView alloc] initWithTitle:TGLocalized(@"Conversation.MeetingProposal") pressed:^
-            {
-            __strong TGModernConversationController *strongSelf = weakSelf;
-            if (strongSelf != nil)
-            {
-                [strongSelf.view endEditing:true];
-                [strongSelf->_attachmentSheetWindow dismissAnimated:true];
-                WMMeetingCreationController *meetingController = [[WMMeetingCreationController alloc] init];
-                meetingController.watcher = strongSelf.actionHandle;
-                TGNavigationController *navigationController = [TGNavigationController navigationControllerWithControllers:@[meetingController]];
-                
-                if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad)
-                {
-                    navigationController.presentationStyle = TGNavigationControllerPresentationStyleInFormSheet;
-                    navigationController.modalPresentationStyle = UIModalPresentationFormSheet;
-                }
-                
-                [strongSelf presentViewController:navigationController animated:true completion:nil];
-            }
-        }]];
+        if ([_companion allowNewMeeting])
+            [items addObject:[[TGAttachmentSheetButtonItemView alloc] initWithTitle:TGLocalized(@"Conversation.MeetingProposal") pressed:^
+                              {
+                                  __strong TGModernConversationController *strongSelf = weakSelf;
+                                  if (strongSelf != nil)
+                                  {
+                                      [strongSelf.view endEditing:true];
+                                      [strongSelf->_attachmentSheetWindow dismissAnimated:true];
+                                      WMMeetingCreationController *meetingController = [[WMMeetingCreationController alloc] init];
+                                      meetingController.watcher = strongSelf.actionHandle;
+                                      TGNavigationController *navigationController = [TGNavigationController navigationControllerWithControllers:@[meetingController]];
+                                      
+                                      if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad)
+                                      {
+                                          navigationController.presentationStyle = TGNavigationControllerPresentationStyleInFormSheet;
+                                          navigationController.modalPresentationStyle = UIModalPresentationFormSheet;
+                                      }
+                                      
+                                      [strongSelf presentViewController:navigationController animated:true completion:nil];
+                                  }
+                              }]];
         
 //        [items addObject:[[TGAttachmentSheetButtonItemView alloc] initWithTitle:TGLocalized(@"Conversation.SearchWebImages") pressed:^
 //        {
@@ -4583,17 +4595,10 @@ static UIView *_findBackArrow(UIView *view)
     {
         [self dismissViewControllerAnimated:true completion:nil];
         if (options) {
-            NSString* desc = nil;
-            NSString* date = nil;
-            NSString* time = nil;
-            NSString* location = nil;
-        
-            desc = options[@"descriptionString"];
-            date = options[@"dateString"];
-            time = options[@"timeString"];
-            location = options[@"locationString"];
-        
-            [_companion controllerWantsToSendMeetingWithDescription:desc date:date time:time location:location];
+            [_companion controllerWantsToSendMeetingWithDescription:options[@"descriptionString"]
+                                                               date:options[@"dateString"]
+                                                               time:options[@"timeString"]
+                                                           location:options[@"locationString"]];
             [_companion loadControllerMeetingTitlePanel];
         }
     }
